@@ -1,0 +1,16 @@
+server:
+  port: 8081
+logging:
+  level:
+    org.springframework.security: debug
+jwt:
+  expiration:
+    time: 36000000
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+file:
+  storage:
+    location: uploads
