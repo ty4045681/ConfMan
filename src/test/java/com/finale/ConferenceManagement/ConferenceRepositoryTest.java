@@ -25,7 +25,7 @@ public class ConferenceRepositoryTest {
     @BeforeEach
     void setUp() {
         conference1 = new Conference(
-                "TITLE: A test title",
+                null, "TITLE: A test title",
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 LocalDateTime.of(2023, Month.MAY, 20, 9, 0),
                 "LOCATION: Shanghai",
@@ -47,7 +47,7 @@ public class ConferenceRepositoryTest {
         );
 
         conference2 = new Conference(
-                "TITLE: A second test title",
+                null, "TITLE: A second test title",
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 LocalDateTime.of(2023, Month.MAY, 21, 9, 0),
                 "LOCATION: Shanghai",
