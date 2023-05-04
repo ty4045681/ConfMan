@@ -1,5 +1,5 @@
 package com.finale.ConferenceManagement.model;
 
 public enum ApplyStatus {
-    PENDING, ACCEPTED, REJECTED;
+    PENDING, APPROVED, REJECTED, CANCELLED, EXPIRED
 }

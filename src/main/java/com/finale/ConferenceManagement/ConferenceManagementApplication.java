@@ -19,7 +19,7 @@ public class ConferenceManagementApplication {
 
 		SampleDataInitializerAndDeleter initializerAndDeleter = context.getBean(SampleDataInitializerAndDeleter.class);
 		initializerAndDeleter.deleteAllData();
-		initializerAndDeleter.insertData("user", "conference", "attendance");
+		initializerAndDeleter.insertData("user", "conference", "attendance", "paper");
 
 		JwtUtils jwtUtils = context.getBean(JwtUtils.class);
 		System.out.println("JWT expiration time: ");

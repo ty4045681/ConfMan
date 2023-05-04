@@ -51,8 +51,7 @@ public class UserService {
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
                 Set.of(UserRole.USER),
-                registerRequest.getName(),
-                Set.of()
+                registerRequest.getName()
         );
 
         if (!registerRequest.getAddress().isEmpty()) {

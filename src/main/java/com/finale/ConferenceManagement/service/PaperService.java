@@ -7,11 +7,13 @@ import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.repository.ConferenceRepository;
 import com.finale.ConferenceManagement.repository.PaperRepository;
 import org.springframework.core.io.Resource;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +75,18 @@ public class PaperService {
     public List<Paper> findAllPapersByUsername(String username) {
         User user = getUserFromUsername(username);
         return paperRepository.findAllByAuthor(user);
+    }
+
+    public long countPaperByAuthor(String username) {
+        return paperRepository.countByAuthor(getUserFromUsername(username));
+    }
+
+    public long countPaperByAuthorAndStatus(String username, ApplyStatus status) {
+        return paperRepository.countByAuthorAndStatus(getUserFromUsername(username), status);
+    }
+
+    public long countPaperByAuthorAndStatusAndConferenceTime(String username, ApplyStatus status, boolean isConferenceUpcoming) {
+        return paperRepository.countByAuthorAndStatusAndConferenceTime(getUserFromUsername(username), status, isConferenceUpcoming);
     }
 
     private Conference getConferenceFromConferenceId(String conferenceId) {

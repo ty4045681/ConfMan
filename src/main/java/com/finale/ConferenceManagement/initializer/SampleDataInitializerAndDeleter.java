@@ -24,6 +24,11 @@ public class SampleDataInitializerAndDeleter {
 
     private final Attendance attendance1;
     private final Attendance attendance2;
+    private final Attendance attendance3;
+    private final Attendance attendance4;
+
+    private final Paper paper1;
+    private final Paper paper2;
 
     public SampleDataInitializerAndDeleter(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -33,8 +38,7 @@ public class SampleDataInitializerAndDeleter {
                 "abc@gmail.com",
                 "password1",
                 Set.of(UserRole.USER, UserRole.ATTENDEE),
-                "Peter",
-                Set.of()
+                "Peter"
         );
 
         user2 = new User(
@@ -42,8 +46,7 @@ public class SampleDataInitializerAndDeleter {
                 "def@gmail.com",
                 "password2",
                 Set.of(UserRole.USER, UserRole.ADMIN),
-                "Sadie",
-                Set.of()
+                "Sadie"
         );
 
         organizer1 = new User(
@@ -51,8 +54,7 @@ public class SampleDataInitializerAndDeleter {
                 "123@gmail.com",
                 "password1",
                 Set.of(UserRole.ORGANIZER),
-                "Tom",
-                Set.of()
+                "Tom"
         );
 
         organizer2 = new User(
@@ -60,8 +62,7 @@ public class SampleDataInitializerAndDeleter {
                 "456@gmail.com",
                 "password2",
                 Set.of(UserRole.ORGANIZER),
-                "Jerry",
-                Set.of()
+                "Jerry"
         );
 
         conference1 = new Conference(
@@ -131,7 +132,41 @@ public class SampleDataInitializerAndDeleter {
         attendance2 = new Attendance(
                 user2,
                 conference1,
-                ApplyStatus.ACCEPTED
+                ApplyStatus.APPROVED
+        );
+
+        attendance3 = new Attendance(
+                user1,
+                conference1,
+                ApplyStatus.APPROVED
+        );
+
+        attendance4 = new Attendance(
+                user1,
+                conference1,
+                ApplyStatus.APPROVED
+        );
+
+        paper1 = new Paper(
+                conference1,
+                user1,
+                ApplyStatus.APPROVED,
+                "title1",
+                Set.of("Joe", "Tom"),
+                "abstract1",
+                Set.of("keyword1", "keyword2"),
+                ""
+        );
+
+        paper2 = new Paper(
+                conference1,
+                user1,
+                ApplyStatus.PENDING,
+                "title2",
+                Set.of("Jack", "Alice"),
+                "abstract2",
+                Set.of("keyword1", "keyword2"),
+                ""
         );
 
     }
@@ -161,9 +196,20 @@ public class SampleDataInitializerAndDeleter {
                 case "attendance" -> {
                     mongoTemplate.insert(attendance1, name);
                     mongoTemplate.insert(attendance2, name);
-                    System.out.println("Successfully insert attendance1 and attendance2");
+                    mongoTemplate.insert(attendance3, name);
+                    mongoTemplate.insert(attendance4, name);
+                    System.out.println("Successfully insert attendance1, attendance2, attendance3 and attendance4");
                     System.out.println("ATTENDANCE1 id: " + attendance1.getId().toString());
                     System.out.println("ATTENDANCE2 id: " + attendance2.getId().toString());
+                    System.out.println("ATTENDANCE3 id: " + attendance3.getId().toString());
+                    System.out.println("ATTENDANCE4 id: " + attendance4.getId().toString());
+                }
+                case "paper" -> {
+                    mongoTemplate.insert(paper1, name);
+                    mongoTemplate.insert(paper2, name);
+                    System.out.println("Successfully insert paper1, paper2");
+                    System.out.println("PAPER1 title: " + paper1.getTitle());
+                    System.out.println("PAPER2 title: " + paper2.getTitle());
                 }
                 default -> System.out.println("Collection '" + name + "' does not exist");
             }

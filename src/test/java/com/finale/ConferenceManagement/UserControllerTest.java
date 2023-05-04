@@ -38,8 +38,7 @@ class UserControllerTest {
                 "abc@gmail.com",
                 "password1",
                 Set.of(UserRole.USER, UserRole.ATTENDEE),
-                "Peter",
-                Set.of()
+                "Peter"
         );
 
         uuid1 = user1.getId();
@@ -49,8 +48,7 @@ class UserControllerTest {
                 "def@gmail.com",
                 "password2",
                 Set.of(UserRole.USER, UserRole.ADMIN),
-                "Sadie",
-                Set.of()
+                "Sadie"
         );
 
         uuid2 = user2.getId();

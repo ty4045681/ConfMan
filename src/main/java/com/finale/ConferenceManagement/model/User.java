@@ -31,8 +31,4 @@ public class User {
     private String address;
     private String phoneNumber;
     private String bio;
-
-    // 3. Conference attendance history
-    @NonNull
-    private Set<UUID> pastAttendedConference;
 }
