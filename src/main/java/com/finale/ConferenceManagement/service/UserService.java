@@ -2,6 +2,7 @@ package com.finale.ConferenceManagement.service;
 
 import com.finale.ConferenceManagement.dto.RegisterRequest;
 import com.finale.ConferenceManagement.dto.RegisterResponse;
+import com.finale.ConferenceManagement.dto.UpdateRequest;
 import com.finale.ConferenceManagement.exceptions.UserAlreadyExistsException;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.model.UserRole;
@@ -90,9 +91,22 @@ public class UserService {
             return Optional.empty();
         }
     }
-    public User updateUser(User user) {
-        deleteById(user.getId());
-        return registerUser(user);
+    public Optional<User> updateUser(String id, UpdateRequest updateRequest) {
+        Optional<User> optionalUser = userRepository.findById(UUID.fromString(id));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            user.setUsername(updateRequest.getUsername());
+            user.setEmail(updateRequest.getEmail());
+            user.setName(updateRequest.getName());
+            user.setAddress(updateRequest.getAddress());
+            user.setPhoneNumber(updateRequest.getPhoneNumber());
+            user.setBio(updateRequest.getBio());
+
+            userRepository.save(user);
+            return Optional.of(user);
+        }
+        return Optional.empty();
     }
 
     public boolean checkUsername(String username) {
@@ -101,5 +115,19 @@ public class UserService {
 
     public boolean checkEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public boolean changePassword(String id, String currentPassword, String newPassword) {
+        Optional<User> optionalUser = userRepository.findById(UUID.fromString(id));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (currentPassword.equals(user.getPassword())) {
+                user.setPassword(newPassword);
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
     }
 }

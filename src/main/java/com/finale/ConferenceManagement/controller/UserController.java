@@ -1,6 +1,7 @@
 package com.finale.ConferenceManagement.controller;
 
 import com.finale.ConferenceManagement.dto.*;
+import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.service.UserService;
 import com.finale.ConferenceManagement.util.JwtUtils;
@@ -42,14 +43,14 @@ public class UserController {
         }
     }
 
-    @GetMapping("id={id}")
+    @GetMapping("/id={id}")
     public ResponseEntity<GetUserByIdResponse> getUserById(@PathVariable("id") String id) {
         UUID uuid = UUID.fromString(id);
         Optional<User> user = userService.findById(uuid);
         return user.map(value -> new ResponseEntity<>(new GetUserByIdResponse(value.getUsername()), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("username={username}")
+    @GetMapping("/username={username}")
     public ResponseEntity<GetUserByUsernameResponse> getUserByUsername(@PathVariable("username") String username) {
         Optional<User> user = userService.findByUsername(username);
         return user.map(value -> new ResponseEntity<>(new GetUserByUsernameResponse(value.getId(), value.getUsername()), HttpStatus.OK))
@@ -62,13 +63,17 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    @PutMapping("id={id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        userService.updateUser(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @PutMapping("/id={id}")
+    public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UpdateRequest updateRequest) {
+        Optional<User> optionalUser = userService.updateUser(id, updateRequest);
+        if (optionalUser.isPresent()) {
+            return new ResponseEntity<>(optionalUser.get(), HttpStatus.OK);
+        } else {
+            throw new UserNotFoundException();
+        }
     }
 
-    @DeleteMapping("id={id}")
+    @DeleteMapping("/id={id}")
     public ResponseEntity<User> deleteUser(@PathVariable("id") String id) {
         Optional<User> optionalUser = userService.deleteById(UUID.fromString(id));
         return optionalUser.map(user -> new ResponseEntity<>(user, HttpStatus.NO_CONTENT)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -90,5 +95,13 @@ public class UserController {
     public ResponseEntity<?> checkEmail(@RequestParam("email") String email) {
         boolean exists = userService.checkEmail(email);
         return ResponseEntity.ok().body(new CheckResponse(exists));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        boolean isSuccessful = userService.changePassword(changePasswordRequest.getId(), changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
+        return isSuccessful == true ? 
+            ResponseEntity.ok().body(new ChangePasswordResponse(isSuccessful)) :
+            ResponseEntity.badRequest().body(new ChangePasswordResponse(isSuccessful));
     }
 }
