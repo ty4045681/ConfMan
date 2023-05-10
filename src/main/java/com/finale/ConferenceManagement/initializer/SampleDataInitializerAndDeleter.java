@@ -159,7 +159,7 @@ public class SampleDataInitializerAndDeleter {
         );
 
         paper2 = new Paper(
-                conference1,
+                conference2,
                 user1,
                 ApplyStatus.PENDING,
                 "title2",

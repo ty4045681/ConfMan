@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement.service;
 
+import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
 import com.finale.ConferenceManagement.model.ApplyStatus;
 import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.Paper;
@@ -77,6 +78,14 @@ public class PaperService {
         return paperRepository.findAllByAuthor(user);
     }
 
+    public List<Paper> findAllPapersByUserId(String id) {
+        User user = getUserFromUserId(id);
+        if (user.equals(null)) {
+            throw new UserNotFoundException();
+        }
+        return paperRepository.findAllByAuthor(user);
+    }
+
     public long countPaperByAuthor(String username) {
         return paperRepository.countByAuthor(getUserFromUsername(username));
     }
@@ -95,6 +104,10 @@ public class PaperService {
 
     private User getUserFromUsername(String username) {
         return userService.findByUsername(username).orElse(null);
+    }
+
+    private User getUserFromUserId(String id) {
+        return userService.findById(UUID.fromString(id)).orElse(null);
     }
 
 }

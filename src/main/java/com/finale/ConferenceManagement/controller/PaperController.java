@@ -1,13 +1,18 @@
 package com.finale.ConferenceManagement.controller;
 
+import com.finale.ConferenceManagement.dto.GetPapersByUserIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
 import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Paper;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.service.PaperService;
 import com.finale.ConferenceManagement.service.UserService;
 import com.finale.ConferenceManagement.util.JwtUtils;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +50,16 @@ public class PaperController {
         }
 
         return ResponseEntity.ok(paperService.countPaperByAuthorAndStatusAndConferenceTime(username, ApplyStatus.valueOf(status), isConferenceUpcoming));
+    }
+
+    @GetMapping("/userId={userId}")
+    public ResponseEntity<?> getPapersByUserId(@PathVariable("userId") String userId) {
+        try {
+            List<Paper> papers = paperService.findAllPapersByUserId(userId);
+            List<GetPapersByUserIdResponse> responses = papers.stream().map(paper -> new GetPapersByUserIdResponse(paper)).toList();
+            return ResponseEntity.ok().body(responses);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
