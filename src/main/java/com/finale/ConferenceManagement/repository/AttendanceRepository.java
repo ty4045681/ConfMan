@@ -22,5 +22,6 @@ public interface AttendanceRepository extends MongoRepository<Attendance, UUID>,
 //    long countByUserAndStatus(User user, ApplyStatus status);
 
     long countByUserAndStatusAndTime(User user, ApplyStatus status, boolean isConferenceUpcoming);
+
 }
 

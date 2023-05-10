@@ -137,12 +137,12 @@ public class SampleDataInitializerAndDeleter {
 
         attendance3 = new Attendance(
                 user1,
-                conference1,
+                conference2,
                 ApplyStatus.APPROVED
         );
 
         attendance4 = new Attendance(
-                user1,
+                user2,
                 conference1,
                 ApplyStatus.APPROVED
         );

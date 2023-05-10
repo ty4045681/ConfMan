@@ -1,13 +1,18 @@
 package com.finale.ConferenceManagement.controller;
 
+import com.finale.ConferenceManagement.dto.GetConferencesByUserIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
 import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.service.AttendanceService;
 import com.finale.ConferenceManagement.service.UserService;
 import com.finale.ConferenceManagement.util.JwtUtils;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,4 +53,13 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.countAttendanceByUserAndConferenceStatus(user, isConferenceUpcoming, ApplyStatus.valueOf(status)));
     }
 
+    @GetMapping("/userId={userId}")
+    public ResponseEntity<?> getConferencesByUserId(@PathVariable("userId") String userId) {
+        try {
+            List<GetConferencesByUserIdResponse> conferences = attendanceService.findAllConferencesByUserId(userId);
+            return ResponseEntity.ok().body(conferences);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 }

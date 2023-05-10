@@ -1,23 +1,32 @@
 package com.finale.ConferenceManagement.service;
 
+import com.finale.ConferenceManagement.dto.GetConferencesByUserIdResponse;
+import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
 import com.finale.ConferenceManagement.model.ApplyStatus;
 import com.finale.ConferenceManagement.model.Attendance;
+import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.repository.AttendanceRepository;
+import com.finale.ConferenceManagement.repository.UserRepository;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
+    private final UserService userService;
     private final MongoTemplate mongoTemplate;
 
-    public AttendanceService(AttendanceRepository attendanceRepository, MongoTemplate mongoTemplate) {
+    public AttendanceService(AttendanceRepository attendanceRepository, UserService userService,MongoTemplate mongoTemplate) {
         this.attendanceRepository = attendanceRepository;
+        this.userService = userService;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -43,6 +52,25 @@ public class AttendanceService {
 
     public List<Attendance> findAllAttendanceByUser(User user) {
         return attendanceRepository.findAllByUser(user);
+    }
+
+    public List<GetConferencesByUserIdResponse> findAllConferencesByUserId(String userId) {
+        Optional<User> optionalUser = userService.findById(UUID.fromString(userId));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            List<Attendance> attendances = findAllAttendanceByUser(user);
+            List<Conference> conferences = attendances.stream().map(Attendance::getConference).toList();
+
+            List<GetConferencesByUserIdResponse> responses = new ArrayList<>();
+            for (int i = 0; i < attendances.size(); i++) {
+                responses.add(new GetConferencesByUserIdResponse(conferences.get(i), attendances.get(i)));
+            }
+
+            return responses;
+        } else {
+            throw new UserNotFoundException();
+        }
     }
 
     /**
