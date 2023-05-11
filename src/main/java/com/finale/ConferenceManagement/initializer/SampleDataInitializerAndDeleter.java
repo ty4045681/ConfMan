@@ -37,7 +37,7 @@ public class SampleDataInitializerAndDeleter {
                 "USER1",
                 "abc@gmail.com",
                 "password1",
-                Set.of(UserRole.ATTENDEE),
+                Set.of(UserRole.USER),
                 "Peter"
         );
 

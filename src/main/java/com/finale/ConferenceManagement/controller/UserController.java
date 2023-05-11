@@ -38,7 +38,7 @@ public class UserController {
         if (isAllInfo) {
             return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } else {
-            return user.map(value -> new ResponseEntity<>(new GetUserResponse(value.getId().toString(), value.getUsername()), HttpStatus.OK))
+            return user.map(value -> new ResponseEntity<>(new GetUserResponse(value.getId().toString(), value.getUsername(), value.getRoles().stream().findFirst().get().name()), HttpStatus.OK))
                     .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
     }

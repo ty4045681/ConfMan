@@ -37,7 +37,7 @@ class UserControllerTest {
                 "USER 1",
                 "abc@gmail.com",
                 "password1",
-                Set.of(UserRole.USER, UserRole.ATTENDEE),
+                Set.of(UserRole.USER),
                 "Peter"
         );
 
@@ -47,7 +47,7 @@ class UserControllerTest {
                 "USER 2",
                 "def@gmail.com",
                 "password2",
-                Set.of(UserRole.USER, UserRole.ADMIN),
+                Set.of(UserRole.ADMIN),
                 "Sadie"
         );
 
