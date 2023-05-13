@@ -2,6 +2,7 @@ package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.PaperRepositoryCustom;
 import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,6 +35,18 @@ public class PaperRepositoryImpl implements PaperRepositoryCustom {
                 : Aggregation.match(Criteria.where("conference.startDate").lt(LocalDateTime.now()));
 
         Aggregation aggregation = Aggregation.newAggregation(userMatch, statusMatch, lookupConference, Aggregation.unwind("conference"), timeMatch, Aggregation.count().as("count"));
+
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "paper", Document.class);
+        Document result = results.getUniqueMappedResult();
+
+        return result != null ? result.getInteger("count") : 0;
+    }
+
+    @Override
+    public long countByConference(Conference conference) {
+        MatchOperation conferenceMatch = Aggregation.match(Criteria.where("conference.$id").is(conference.getId()));
+
+        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch, Aggregation.count().as("count"));
 
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "paper", Document.class);
         Document result = results.getUniqueMappedResult();

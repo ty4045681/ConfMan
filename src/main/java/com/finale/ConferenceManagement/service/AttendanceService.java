@@ -7,8 +7,6 @@ import com.finale.ConferenceManagement.model.Attendance;
 import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.repository.AttendanceRepository;
-import com.finale.ConferenceManagement.repository.UserRepository;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -22,12 +20,9 @@ import java.util.UUID;
 public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final UserService userService;
-    private final MongoTemplate mongoTemplate;
-
     public AttendanceService(AttendanceRepository attendanceRepository, UserService userService,MongoTemplate mongoTemplate) {
         this.attendanceRepository = attendanceRepository;
         this.userService = userService;
-        this.mongoTemplate = mongoTemplate;
     }
 
     public Attendance create(Attendance attendance) {
@@ -84,6 +79,11 @@ public class AttendanceService {
      *  the number of user's attendance by status and the time of conferences
      */
     public long countAttendanceByUserAndConferenceStatus(@NotNull User user, boolean isConferenceUpcoming, ApplyStatus status) {
-        return attendanceRepository.countByUserAndStatusAndTime(user, status, isConferenceUpcoming);
+        return attendanceRepository.countConferencesByUserAndStatusAndTime(user, status, isConferenceUpcoming);
     }
+
+    public long countAttendeesByConferenceAndStatus(Conference conference, ApplyStatus applyStatus) {
+        return attendanceRepository.countAttendeesByConferenceAndStatus(conference, applyStatus);
+    }
+
 }

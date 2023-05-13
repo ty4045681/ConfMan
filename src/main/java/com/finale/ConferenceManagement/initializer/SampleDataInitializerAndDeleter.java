@@ -18,6 +18,8 @@ public class SampleDataInitializerAndDeleter {
     private final User user2;
     private final User organizer1;
     private final User organizer2;
+    private final User judge1;
+    private final User judge2;
 
     private final Conference conference1;
     private final Conference conference2;
@@ -26,6 +28,10 @@ public class SampleDataInitializerAndDeleter {
     private final Attendance attendance2;
     private final Attendance attendance3;
     private final Attendance attendance4;
+
+    private final Review review1;
+
+    private final Review review2;
 
     private final Paper paper1;
     private final Paper paper2;
@@ -62,6 +68,22 @@ public class SampleDataInitializerAndDeleter {
                 "456@gmail.com",
                 "password2",
                 Set.of(UserRole.ORGANIZER),
+                "Jerry"
+        );
+
+        judge1 = new User(
+                "JUDGE1",
+                "JUDGE1@gmail.com",
+                "password1",
+                Set.of(UserRole.JUDGE),
+                "Tom"
+        );
+
+        judge2 = new User(
+                "JUDGE2",
+                "JUDGE2@gmail.com",
+                "password2",
+                Set.of(UserRole.JUDGE),
                 "Jerry"
         );
 
@@ -143,7 +165,7 @@ public class SampleDataInitializerAndDeleter {
 
         attendance4 = new Attendance(
                 user2,
-                conference1,
+                conference2,
                 ApplyStatus.APPROVED
         );
 
@@ -169,6 +191,19 @@ public class SampleDataInitializerAndDeleter {
                 ""
         );
 
+        review1 = new Review(
+                judge1,
+                conference1,
+                paper1,
+                ApplyStatus.APPROVED
+        );
+
+        review2 = new Review(
+                judge1,
+                conference2,
+                null,
+                null
+        );
     }
 
     public void insertData(String... collectionName) {
@@ -211,6 +246,13 @@ public class SampleDataInitializerAndDeleter {
                     System.out.println("PAPER1 title: " + paper1.getTitle());
                     System.out.println("PAPER2 title: " + paper2.getTitle());
                 }
+                case "review" -> {
+                    mongoTemplate.insert(review1, name);
+                    mongoTemplate.insert(review2, name);
+                    System.out.println("Successfully insert review1, review2");
+                    System.out.println("REVIEW1 id: " + review1.getId().toString());
+                    System.out.println("REVIEW2 id: " + review2.getId().toString());
+                }
                 default -> System.out.println("Collection '" + name + "' does not exist");
             }
         }
@@ -227,5 +269,7 @@ public class SampleDataInitializerAndDeleter {
         System.out.println("Delete all presentations in 'presentation' collection");
         mongoTemplate.remove(new Query(), "attendance");
         System.out.println("Delete all attendances in 'attendance' collection");
+        mongoTemplate.remove(new Query(), "review");
+        System.out.println("Delete all reviews in 'review' collection");
     }
 }

@@ -2,6 +2,7 @@ package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.PaperRepositoryCustom;
 import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.Paper;
 import com.finale.ConferenceManagement.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -18,4 +19,6 @@ public interface PaperRepository extends MongoRepository<Paper, UUID>, PaperRepo
     long countByAuthorAndStatus(User author, ApplyStatus status);
 
     long countByAuthorAndStatusAndConferenceTime(User author, ApplyStatus status, boolean isConferenceUpcoming);
+
+    long countByConference(Conference conference);
 }

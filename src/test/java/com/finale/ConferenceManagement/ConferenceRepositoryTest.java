@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataMongoTest
 public class ConferenceRepositoryTest {
@@ -25,7 +25,7 @@ public class ConferenceRepositoryTest {
     @BeforeEach
     void setUp() {
         conference1 = new Conference(
-                null, "TITLE: A test title",
+                null,"TITLE: A test title",
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 LocalDateTime.of(2023, Month.MAY, 20, 9, 0),
                 "LOCATION: Shanghai",

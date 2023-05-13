@@ -98,6 +98,14 @@ public class PaperService {
         return paperRepository.countByAuthorAndStatusAndConferenceTime(getUserFromUsername(username), status, isConferenceUpcoming);
     }
 
+    public long countPapersByConference(String conferenceId) {
+        return paperRepository.countByConference(getConferenceFromConferenceId(conferenceId));
+    }
+
+    public long countPapersByConference(Conference conference) {
+        return paperRepository.countByConference(conference);
+    }
+
     private Conference getConferenceFromConferenceId(String conferenceId) {
         return conferenceRepository.findConferenceById(UUID.fromString(conferenceId));
     }

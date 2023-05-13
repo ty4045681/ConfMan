@@ -3,6 +3,7 @@ package com.finale.ConferenceManagement.repository;
 import com.finale.ConferenceManagement.interfaces.AttendanceRepositoryCustom;
 import com.finale.ConferenceManagement.model.ApplyStatus;
 import com.finale.ConferenceManagement.model.Attendance;
+import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import lombok.NonNull;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -21,7 +22,8 @@ public interface AttendanceRepository extends MongoRepository<Attendance, UUID>,
 //    })
 //    long countByUserAndStatus(User user, ApplyStatus status);
 
-    long countByUserAndStatusAndTime(User user, ApplyStatus status, boolean isConferenceUpcoming);
+    long countConferencesByUserAndStatusAndTime(User user, ApplyStatus status, boolean isConferenceUpcoming);
 
+    long countAttendeesByConferenceAndStatus(Conference conference, ApplyStatus applyStatus);
 }
 
