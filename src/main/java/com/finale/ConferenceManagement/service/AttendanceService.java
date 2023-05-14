@@ -86,4 +86,11 @@ public class AttendanceService {
         return attendanceRepository.countAttendeesByConferenceAndStatus(conference, applyStatus);
     }
 
+    public List<Attendance> findAttendeesByConferenceAndStatus(Conference conference, ApplyStatus applyStatus) {
+        return attendanceRepository.findAttendeesByConferenceAndStatus(conference, applyStatus);
+    }
+
+    public User findUserByAttendance(Attendance attendance) {
+        return attendanceRepository.findUserByAttendance(attendance);
+    }
 }

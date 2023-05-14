@@ -21,4 +21,6 @@ public interface PaperRepository extends MongoRepository<Paper, UUID>, PaperRepo
     long countByAuthorAndStatusAndConferenceTime(User author, ApplyStatus status, boolean isConferenceUpcoming);
 
     long countByConference(Conference conference);
+
+    List<Paper> findPapersByConference(Conference conference);
 }

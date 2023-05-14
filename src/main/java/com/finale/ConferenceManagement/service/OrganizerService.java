@@ -1,18 +1,20 @@
 package com.finale.ConferenceManagement.service;
 
+import com.finale.ConferenceManagement.dto.GetAttendeeByOrganizerIdResponse;
 import com.finale.ConferenceManagement.dto.GetConferenceByOrganizerIdResponse;
+import com.finale.ConferenceManagement.dto.GetJudgeByOrganizerIdResponse;
+import com.finale.ConferenceManagement.dto.GetPapersByUserIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
-import com.finale.ConferenceManagement.model.ApplyStatus;
-import com.finale.ConferenceManagement.model.Conference;
-import com.finale.ConferenceManagement.model.User;
-import com.finale.ConferenceManagement.model.UserRole;
+import com.finale.ConferenceManagement.model.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -98,5 +100,76 @@ public class OrganizerService {
         } else {
             throw new UserNotFoundException();
         }
+    }
+
+    public List<GetAttendeeByOrganizerIdResponse> findAttendeeByOrganizerId(String organizerId) {
+        Optional<User> optionalUser = userService.findById(UUID.fromString(organizerId));
+        if (optionalUser.isPresent()) {
+            User organizer = optionalUser.get();
+
+            if (organizer.getRoles().contains(UserRole.ORGANIZER)) {
+                List<GetAttendeeByOrganizerIdResponse> responses = new ArrayList<>();
+                List<Conference> conferences = conferenceService.findConferencesByOrganizer(organizer);
+                for (Conference conference: conferences) {
+                    for (ApplyStatus applyStatus: ApplyStatus.values()){
+                        List<Attendance> attendances = attendanceService.findAttendeesByConferenceAndStatus(conference, applyStatus);
+                        responses.addAll(attendances.stream().map(attendance -> {
+                            User user = attendanceService.findUserByAttendance(attendance);
+                            return new GetAttendeeByOrganizerIdResponse(
+                                    user.getName(),
+                                    user.getUsername(),
+                                    user.getEmail(),
+                                    conference.getTitle(),
+                                    applyStatus.name()
+                            );
+                        }).toList());
+                    }
+                }
+
+                return responses;
+            } else {
+                throw new BadRequestException("User is not an organizer");
+            }
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
+
+    public List<GetPapersByUserIdResponse> findPaperByOrganizerId(String organizerId) {
+        User organizer = userService.findById(UUID.fromString(organizerId))
+                .orElseThrow(UserNotFoundException::new);
+
+        if (!organizer.getRoles().contains(UserRole.ORGANIZER)) {
+            throw new BadRequestException("User is not an organizer");
+        }
+
+        return conferenceService.findConferencesByOrganizer(organizer)
+                .stream()
+                .flatMap(conference -> paperService.findPapersByConference(conference).stream())
+                .map(GetPapersByUserIdResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetJudgeByOrganizerIdResponse> findJudgeByOrganizerId(String organizerId) {
+        User organizer = userService.findById(UUID.fromString(organizerId))
+                .orElseThrow(UserNotFoundException::new);
+
+        if (!organizer.getRoles().contains(UserRole.ORGANIZER)) {
+            throw new BadRequestException("User is not an organizer");
+        }
+
+        return conferenceService.findConferencesByOrganizer(organizer)
+                .stream()
+                .flatMap(conference -> reviewService.findReviewsByConference(conference).stream()
+                        .map(review -> {
+                            User judge = reviewService.findJudgeByReview(review);
+                            return new GetJudgeByOrganizerIdResponse(
+                                    judge.getName(),
+                                    judge.getUsername(),
+                                    judge.getEmail(),
+                                    conference.getTitle()
+                            );
+                        }))
+                .collect(Collectors.toList());
     }
 }

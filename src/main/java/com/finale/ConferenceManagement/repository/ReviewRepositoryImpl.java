@@ -2,16 +2,18 @@ package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.ReviewRepositoryCustom;
 import com.finale.ConferenceManagement.model.Conference;
+import com.finale.ConferenceManagement.model.Review;
 import com.finale.ConferenceManagement.model.User;
 import lombok.AllArgsConstructor;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -35,28 +37,36 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public Set<User> findJudgesByConference(Conference conference) {
+    public List<User> findJudgesByConference(Conference conference) {
         MatchOperation conferenceMatch = Aggregation.match(Criteria.where("conference.$id").is(conference.getId()));
 
-        GroupOperation groupByJudge = Aggregation.group("judge");
+        GroupOperation groupByJudge = Aggregation.group("judge.$id").first("judge").as("judge");
+        ProjectionOperation projectJudge = Aggregation.project("judge").andExclude("_id");
 
-        LookupOperation lookupUser = LookupOperation.newLookup()
-                .from("user")
-                .localField("judge.$id")
-                .foreignField("_id")
-                .as("judgeInfo");
-
-        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch, groupByJudge, lookupUser);
+        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch, groupByJudge, projectJudge);
 
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "review", Document.class);
-        List<Document> judgeDocuments = results.getMappedResults();
 
-        // Extract judgeInfo from the documents
-        Set<User> judges = judgeDocuments.stream()
-                .map(doc -> ((List<Document>) doc.get("judgeInfo")).get(0))
-                .map(judgeDoc -> mongoTemplate.getConverter().read(User.class, judgeDoc))
-                .collect(Collectors.toSet());
+        return results.getMappedResults().stream()
+                .map(document -> mongoTemplate.getConverter().read(User.class, document))
+                .collect(Collectors.toList());
+    }
 
-        return judges;
+    @Override
+    public List<Review> findReviewsByConference(Conference conference) {
+        MatchOperation conferenceMatch = Aggregation.match(Criteria.where("conference.$id").is(conference.getId()));
+
+        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch);
+
+        AggregationResults<Review> results = mongoTemplate.aggregate(aggregation, "review", Review.class);
+
+        return results.getMappedResults();
+    }
+
+    @Override
+    public User findJudgeByReview(Review review) {
+        UUID judgeId = review.getJudge().getId();
+        Query query = Query.query(Criteria.where("_id").is(judgeId));
+        return mongoTemplate.findOne(query, User.class);
     }
 }

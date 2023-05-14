@@ -2,6 +2,7 @@ package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.AttendanceRepositoryCustom;
 import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Attendance;
 import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import org.bson.Document;
@@ -11,9 +12,12 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class AttendanceRepositoryImpl implements AttendanceRepositoryCustom {
@@ -55,5 +59,24 @@ public class AttendanceRepositoryImpl implements AttendanceRepositoryCustom {
         Document result = results.getUniqueMappedResult();
 
         return result != null ? result.getInteger("count") : 0;
+    }
+
+    @Override
+    public List<Attendance> findAttendeesByConferenceAndStatus(Conference conference, ApplyStatus applyStatus) {
+        MatchOperation conferenceMatch = Aggregation.match(Criteria.where("conference.$id").is(conference.getId()));
+        MatchOperation statusMatch = Aggregation.match(Criteria.where("status").is(applyStatus));
+
+        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch, statusMatch);
+
+        AggregationResults<Attendance> results = mongoTemplate.aggregate(aggregation, "attendance", Attendance.class);
+
+        return results.getMappedResults();
+    }
+
+    @Override
+    public User findUserByAttendance(Attendance attendance) {
+        UUID userId = attendance.getUser().getId();
+        Query query = Query.query(Criteria.where("_id").is(userId));
+        return mongoTemplate.findOne(query, User.class);
     }
 }

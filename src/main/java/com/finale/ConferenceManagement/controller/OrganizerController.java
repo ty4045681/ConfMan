@@ -35,8 +35,23 @@ public class OrganizerController {
         return ResponseEntity.ok(organizerService.countAllJudgesByOrganizer(id));
     }
 
-    @GetMapping("/organizerId={id}")
+    @GetMapping("/organizerId={id}/conference")
     public ResponseEntity<?> getConferencesByOrganizerId(@PathVariable("id") String id) {
         return ResponseEntity.ok(organizerService.findConferenceByOrganizerId(id));
+    }
+
+    @GetMapping("/organizerId={id}/attendee")
+    public ResponseEntity<?> getAttendeesByOrganizerId(@PathVariable("id") String id) {
+        return ResponseEntity.ok(organizerService.findAttendeeByOrganizerId(id));
+    }
+
+    @GetMapping("/organizerId={id}/paper")
+    public ResponseEntity<?> getPapersByOrganizerId(@PathVariable("id") String id) {
+        return ResponseEntity.ok(organizerService.findPaperByOrganizerId(id));
+    }
+
+    @GetMapping("/organizerId={id}/judge")
+    public ResponseEntity<?> getJudgesByOrganizerId(@PathVariable("id") String id) {
+        return ResponseEntity.ok(organizerService.findJudgeByOrganizerId(id));
     }
 }

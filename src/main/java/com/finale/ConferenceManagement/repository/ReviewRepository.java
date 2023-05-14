@@ -7,11 +7,15 @@ import com.finale.ConferenceManagement.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface ReviewRepository extends MongoRepository<Review, UUID>, ReviewRepositoryCustom {
     long countJudgesByConference(Conference conference);
-    Set<User> findJudgesByConference(Conference conference);
+    List<User> findJudgesByConference(Conference conference);
+
+    List<Review> findReviewsByConference(Conference conference);
+
+    User findJudgeByReview(Review review);
 }

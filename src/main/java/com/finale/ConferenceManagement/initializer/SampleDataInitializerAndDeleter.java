@@ -214,12 +214,17 @@ public class SampleDataInitializerAndDeleter {
                     mongoTemplate.insert(user2, name);
                     mongoTemplate.insert(organizer1, name);
                     mongoTemplate.insert(organizer2, name);
+                    mongoTemplate.insert(judge1, name);
+                    mongoTemplate.insert(judge2, name);
                     System.out.println("Successfully insert user1 and user2");
                     System.out.println("Successfully insert organizer1 and organizer2");
+                    System.out.println("Successfully insert judge1 and judge2");
                     System.out.println("USER1 id: " + user1.getId().toString());
                     System.out.println("USER2 id: " + user2.getId().toString());
                     System.out.println("ORGANIZER1 id: " + organizer1.getId().toString());
                     System.out.println("ORGANIZER2 id: " + organizer2.getId().toString());
+                    System.out.println("JUDGE1 id: " + judge1.getId().toString());
+                    System.out.println("JUDGE2 id: " + judge2.getId().toString());
                 }
                 case "conference" -> {
                     mongoTemplate.insert(conference1, name);

@@ -106,6 +106,10 @@ public class PaperService {
         return paperRepository.countByConference(conference);
     }
 
+    public List<Paper> findPapersByConference(Conference conference) {
+        return paperRepository.findPapersByConference(conference);
+    }
+
     private Conference getConferenceFromConferenceId(String conferenceId) {
         return conferenceRepository.findConferenceById(UUID.fromString(conferenceId));
     }

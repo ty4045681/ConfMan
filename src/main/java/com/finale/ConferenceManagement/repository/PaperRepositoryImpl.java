@@ -3,6 +3,7 @@ package com.finale.ConferenceManagement.repository;
 import com.finale.ConferenceManagement.interfaces.PaperRepositoryCustom;
 import com.finale.ConferenceManagement.model.ApplyStatus;
 import com.finale.ConferenceManagement.model.Conference;
+import com.finale.ConferenceManagement.model.Paper;
 import com.finale.ConferenceManagement.model.User;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PaperRepositoryImpl implements PaperRepositoryCustom {
     private final MongoTemplate mongoTemplate;
@@ -52,5 +54,16 @@ public class PaperRepositoryImpl implements PaperRepositoryCustom {
         Document result = results.getUniqueMappedResult();
 
         return result != null ? result.getInteger("count") : 0;
+    }
+
+    @Override
+    public List<Paper> findPapersByConference(Conference conference) {
+        MatchOperation conferenceMatch = Aggregation.match(Criteria.where("conference.$id").is(conference.getId()));
+
+        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch);
+
+        AggregationResults<Paper> results = mongoTemplate.aggregate(aggregation, "paper", Paper.class);
+
+        return results.getMappedResults();
     }
 }
