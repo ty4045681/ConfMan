@@ -9,4 +9,5 @@ public interface ConferenceRepositoryCustom {
     long countConferencesByOrganizer(User organizer);
 
     List<Conference> findConferencesByOrganizer(User organizer);
+
 }

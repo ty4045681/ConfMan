@@ -1,10 +1,7 @@
 package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.PaperRepositoryCustom;
-import com.finale.ConferenceManagement.model.ApplyStatus;
-import com.finale.ConferenceManagement.model.Conference;
-import com.finale.ConferenceManagement.model.Paper;
-import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.*;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -66,4 +63,5 @@ public class PaperRepositoryImpl implements PaperRepositoryCustom {
 
         return results.getMappedResults();
     }
+
 }

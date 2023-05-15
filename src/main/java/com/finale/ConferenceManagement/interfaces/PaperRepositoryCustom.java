@@ -1,9 +1,6 @@
 package com.finale.ConferenceManagement.interfaces;
 
-import com.finale.ConferenceManagement.model.ApplyStatus;
-import com.finale.ConferenceManagement.model.Conference;
-import com.finale.ConferenceManagement.model.Paper;
-import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.*;
 
 import java.util.List;
 

@@ -1,9 +1,7 @@
 package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.ReviewRepositoryCustom;
-import com.finale.ConferenceManagement.model.Conference;
-import com.finale.ConferenceManagement.model.Review;
-import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.*;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +15,10 @@ public interface ReviewRepository extends MongoRepository<Review, UUID>, ReviewR
 
     List<Review> findReviewsByConference(Conference conference);
 
+    List<Review> findReviewsByJudge(User judge);
     User findJudgeByReview(Review review);
+
+    Paper findPaperByReview(Review review);
+
+    long countPapersByJudgeAndStatus(User judge, ApplyStatus status);
 }

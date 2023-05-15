@@ -20,5 +20,4 @@ public class ConferenceService {
         return conferenceRepository.findConferencesByOrganizer(organizer);
     }
 
-
 }

@@ -1,8 +1,6 @@
 package com.finale.ConferenceManagement.service;
 
-import com.finale.ConferenceManagement.model.Conference;
-import com.finale.ConferenceManagement.model.Review;
-import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.*;
 import com.finale.ConferenceManagement.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,19 @@ public class ReviewService {
         return reviewRepository.findReviewsByConference(conference);
     }
 
+    public List<Review> findReviewsByJudge(User judge) {
+        return reviewRepository.findReviewsByJudge(judge);
+    }
+
+    public Paper findPaperByReview(Review review) {
+        return reviewRepository.findPaperByReview(review);
+    }
+
     public User findJudgeByReview(Review review) {
         return reviewRepository.findJudgeByReview(review);
+    }
+
+    public long countPaperByJudgeAndStatus(User judge, ApplyStatus status) {
+        return reviewRepository.countPapersByJudgeAndStatus(judge, status);
     }
 }

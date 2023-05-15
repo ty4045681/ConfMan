@@ -200,9 +200,9 @@ public class SampleDataInitializerAndDeleter {
 
         review2 = new Review(
                 judge1,
-                conference2,
-                null,
-                null
+                conference1,
+                paper2,
+                ApplyStatus.PENDING
         );
     }
 

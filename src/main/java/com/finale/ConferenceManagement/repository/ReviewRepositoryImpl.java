@@ -1,9 +1,7 @@
 package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.interfaces.ReviewRepositoryCustom;
-import com.finale.ConferenceManagement.model.Conference;
-import com.finale.ConferenceManagement.model.Review;
-import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.*;
 import lombok.AllArgsConstructor;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -64,9 +62,43 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     @Override
+    public List<Review> findReviewsByJudge(User judge) {
+        MatchOperation judgeMatch = Aggregation.match(Criteria.where("judge.$id").is(judge.getId()));
+
+        Aggregation aggregation = Aggregation.newAggregation(judgeMatch);
+
+        AggregationResults<Review> results = mongoTemplate.aggregate(aggregation, "review", Review.class);
+
+        return results.getMappedResults();
+    }
+
+    @Override
     public User findJudgeByReview(Review review) {
         UUID judgeId = review.getJudge().getId();
         Query query = Query.query(Criteria.where("_id").is(judgeId));
         return mongoTemplate.findOne(query, User.class);
+    }
+
+    @Override
+    public Paper findPaperByReview(Review review) {
+        UUID paperId = review.getPaper().getId();
+        Query query = Query.query(Criteria.where("_id").is(paperId));
+        return mongoTemplate.findOne(query, Paper.class);
+    }
+
+    @Override
+    public long countPapersByJudgeAndStatus(User judge, ApplyStatus status) {
+        MatchOperation judgeMatch = Aggregation.match(Criteria.where("judge.$id").is(judge.getId()));
+        MatchOperation statusMatch = Aggregation.match(Criteria.where("applyStatus").is(status));
+
+        GroupOperation groupByPaper = Aggregation.group("paper.$id");
+        GroupOperation countDistinctPapers = Aggregation.group().count().as("count");
+
+        Aggregation aggregation = Aggregation.newAggregation(judgeMatch, statusMatch, groupByPaper, countDistinctPapers);
+
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "review", Document.class);
+        Document result = results.getUniqueMappedResult();
+
+        return result != null ? result.getInteger("count") : 0;
     }
 }

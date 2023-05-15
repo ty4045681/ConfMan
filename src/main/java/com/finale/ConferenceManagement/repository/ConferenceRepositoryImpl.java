@@ -41,4 +41,5 @@ public class ConferenceRepositoryImpl implements ConferenceRepositoryCustom {
 
         return results.getMappedResults();
     }
+
 }

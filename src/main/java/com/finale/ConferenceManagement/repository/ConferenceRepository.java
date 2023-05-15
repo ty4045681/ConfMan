@@ -15,5 +15,6 @@ public interface ConferenceRepository extends MongoRepository<Conference, UUID>,
     long countConferencesByOrganizer(User organizer);
 
     List<Conference> findConferencesByOrganizer(User organizer);
+
 }
 
