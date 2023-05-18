@@ -93,4 +93,20 @@ public class AttendanceService {
     public User findUserByAttendance(Attendance attendance) {
         return attendanceRepository.findUserByAttendance(attendance);
     }
+
+    public void deleteSelectedAttendancesOfUserId(String userId, List<String> attendanceIds) {
+        Optional<User> optionalUser = userService.findById(UUID.fromString(userId));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            List<Attendance> attendances = findAllAttendanceByUser(user);
+            List<Attendance> selectedAttendances = attendances.stream()
+                    .filter(attendance -> attendanceIds.contains(attendance.getId().toString()))
+                    .toList();
+
+            attendanceRepository.deleteAll(selectedAttendances);
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
 }

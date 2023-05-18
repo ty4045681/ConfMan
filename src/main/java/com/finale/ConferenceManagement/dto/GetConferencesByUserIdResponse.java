@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GetConferencesByUserIdResponse {
+    private String attendanceId;
     private String id;
     private String title;
     private String startDate;
@@ -17,7 +18,7 @@ public class GetConferencesByUserIdResponse {
     private String status;
 
     public GetConferencesByUserIdResponse(Conference conference, Attendance attendance) {
-        this(conference.getId().toString(), conference.getTitle(), conference.getStartDate().toString(),
+        this(attendance.getId().toString(), conference.getId().toString(), conference.getTitle(), conference.getStartDate().toString(),
                 conference.getEndDate().toString(), conference.getLocation(), attendance.getStatus().name());
     }
 }

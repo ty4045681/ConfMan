@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GetAllUpcomingConference {
+public class GetAllConferenceByDate {
     private String id;
     private String title;
     private String startDate;
@@ -15,7 +15,7 @@ public class GetAllUpcomingConference {
     private String theme;
     private String focus;
 
-    public GetAllUpcomingConference(Conference conference) {
+    public GetAllConferenceByDate(Conference conference) {
         this.id = conference.getId().toString();
         this.title = conference.getTitle();
         this.startDate = conference.getStartDate().toString();

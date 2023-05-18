@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement.controller;
 
+import com.finale.ConferenceManagement.dto.DeleteSelectedAttendancesOfUserIdRequest;
 import com.finale.ConferenceManagement.dto.GetConferencesByUserIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -62,4 +64,15 @@ public class AttendanceController {
             throw e;
         }
     }
+
+    @DeleteMapping("/userId={userId}/delete/attendance")
+    public ResponseEntity<?> deleteSelectedAttendancesOfUserId(@PathVariable("userId") String userId, @Validated @RequestBody DeleteSelectedAttendancesOfUserIdRequest request) {
+        try {
+            attendanceService.deleteSelectedAttendancesOfUserId(userId, request.getIds());
+            return ResponseEntity.ok().body("Delete successfully");
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }
