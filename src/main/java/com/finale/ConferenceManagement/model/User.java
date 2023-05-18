@@ -5,7 +5,6 @@ import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Document(collection = "user")
@@ -23,7 +22,7 @@ public class User {
     @NonNull
     private String password;
     @NonNull
-    private Set<UserRole> roles;
+    private UserRole role;
 
     // 2. Personal information
     @NonNull

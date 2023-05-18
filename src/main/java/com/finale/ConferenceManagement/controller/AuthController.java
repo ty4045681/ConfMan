@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -62,9 +60,7 @@ public class AuthController {
                     signupRequest.getUsername(),
                     signupRequest.getEmail(),
                     passwordEncoder.encode(signupRequest.getPassword()),
-                    signupRequest.getRoles().stream()
-                            .map(UserRole::valueOf)
-                            .collect(Collectors.toSet()),
+                    UserRole.valueOf(signupRequest.getRole()),
                     signupRequest.getName()
             );
         } catch (IllegalArgumentException e) {

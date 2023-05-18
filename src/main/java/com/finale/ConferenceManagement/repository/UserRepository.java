@@ -1,6 +1,7 @@
 package com.finale.ConferenceManagement.repository;
 
 import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.UserRole;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
@@ -11,4 +12,5 @@ public interface UserRepository extends MongoRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+    long countUsersByRole(UserRole role);
 }

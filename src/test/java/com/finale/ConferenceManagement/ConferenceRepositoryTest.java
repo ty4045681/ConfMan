@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement;
 
+import com.finale.ConferenceManagement.model.ApplyStatus;
 import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.repository.ConferenceRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -43,7 +44,8 @@ public class ConferenceRepositoryTest {
                 "GUIDEFORPRE: Click the submission button",
                 List.of("Sponsor 1", "Sponsor 2"),
                 List.of("Exhibitor 1", "Exhibitor 2"),
-                "PHONENUMBER: 1-888-8888"
+                "PHONENUMBER: 1-888-8888",
+                ApplyStatus.APPROVED
         );
 
         conference2 = new Conference(
@@ -65,7 +67,8 @@ public class ConferenceRepositoryTest {
                 "GUIDEFORPRE: Click the submission button",
                 List.of("Sponsor 1", "Sponsor 2"),
                 List.of("Exhibitor 1", "Exhibitor 2"),
-                "PHONENUMBER: 1-888-8888"
+                "PHONENUMBER: 1-888-8888",
+                ApplyStatus.APPROVED
         );
 
         conferenceRepository.saveAll(List.of(conference1, conference2));

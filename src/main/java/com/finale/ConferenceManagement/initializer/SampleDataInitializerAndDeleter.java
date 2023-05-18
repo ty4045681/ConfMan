@@ -43,7 +43,7 @@ public class SampleDataInitializerAndDeleter {
                 "USER1",
                 "abc@gmail.com",
                 "password1",
-                Set.of(UserRole.USER),
+                UserRole.USER,
                 "Peter"
         );
 
@@ -51,7 +51,7 @@ public class SampleDataInitializerAndDeleter {
                 "USER2",
                 "def@gmail.com",
                 "password2",
-                Set.of(UserRole.ADMIN),
+                UserRole.ADMIN,
                 "Sadie"
         );
 
@@ -59,7 +59,7 @@ public class SampleDataInitializerAndDeleter {
                 "ORGANIZER1",
                 "123@gmail.com",
                 "password1",
-                Set.of(UserRole.ORGANIZER),
+                UserRole.ORGANIZER,
                 "Tom"
         );
 
@@ -67,7 +67,7 @@ public class SampleDataInitializerAndDeleter {
                 "ORGANIZER2",
                 "456@gmail.com",
                 "password2",
-                Set.of(UserRole.ORGANIZER),
+                UserRole.ORGANIZER,
                 "Jerry"
         );
 
@@ -75,7 +75,7 @@ public class SampleDataInitializerAndDeleter {
                 "JUDGE1",
                 "JUDGE1@gmail.com",
                 "password1",
-                Set.of(UserRole.JUDGE),
+                UserRole.JUDGE,
                 "Tom"
         );
 
@@ -83,7 +83,7 @@ public class SampleDataInitializerAndDeleter {
                 "JUDGE2",
                 "JUDGE2@gmail.com",
                 "password2",
-                Set.of(UserRole.JUDGE),
+                UserRole.JUDGE,
                 "Jerry"
         );
 
@@ -113,7 +113,8 @@ public class SampleDataInitializerAndDeleter {
                 "Presentation submission guidelines available at techsummit2023.com/cfp",
                 List.of("Sponsor 1", "Sponsor 2"),
                 List.of("Exhibitor 1", "Exhibitor 2"),
-                "+1-800-123-4567"
+                "+1-800-123-4567",
+                ApplyStatus.APPROVED
         );
 
         conference2 = new Conference(
@@ -142,7 +143,8 @@ public class SampleDataInitializerAndDeleter {
                 "Presentation submission guidelines available at globalhealthconference2023.com/cfp",
                 List.of("Sponsor A", "Sponsor B"),
                 List.of("Exhibitor A", "Exhibitor B"),
-                "+44-800-123-4567"
+                "+44-800-123-4567",
+                ApplyStatus.APPROVED
         );
 
         attendance1 = new Attendance(

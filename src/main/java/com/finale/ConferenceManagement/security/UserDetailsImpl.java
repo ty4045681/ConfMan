@@ -6,9 +6,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 public class UserDetailsImpl implements UserDetails {
@@ -71,16 +70,14 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(userRole -> new SimpleGrantedAuthority(userRole.name()))
-                .collect(Collectors.toList());
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().name());
 
         return new UserDetailsImpl(
                 user.getId().toString(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities
+                Collections.singletonList(authority)
         );
     }
 }

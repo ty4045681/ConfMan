@@ -22,7 +22,7 @@ public class JudgeService {
         User judge = userService.findById(UUID.fromString(judgeId))
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!judge.getRoles().contains(UserRole.JUDGE)) {
+        if (!(judge.getRole() == UserRole.JUDGE)) {
             throw new BadRequestException("User is not a judge");
         }
 
@@ -36,7 +36,7 @@ public class JudgeService {
         User judge = userService.findById(UUID.fromString(judgeId))
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!judge.getRoles().contains(UserRole.JUDGE)) {
+        if (!(judge.getRole() == UserRole.JUDGE)) {
             throw new BadRequestException("User is not a judge");
         }
 

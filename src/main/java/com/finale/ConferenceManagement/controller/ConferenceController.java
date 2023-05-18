@@ -8,7 +8,6 @@ import com.finale.ConferenceManagement.model.Attendance;
 import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.repository.ConferenceRepository;
-import com.finale.ConferenceManagement.repository.UserRepository;
 import com.finale.ConferenceManagement.service.AttendanceService;
 import com.finale.ConferenceManagement.service.UserService;
 import com.finale.ConferenceManagement.util.JwtUtils;

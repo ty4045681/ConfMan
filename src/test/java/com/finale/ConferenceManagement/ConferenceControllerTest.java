@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement;
 
+import com.finale.ConferenceManagement.model.ApplyStatus;
 import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.repository.ConferenceRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,8 @@ class ConferenceControllerTest {
                 "GUIDEFORPRE: Click the submission button",
                 List.of("Sponsor 1", "Sponsor 2"),
                 List.of("Exhibitor 1", "Exhibitor 2"),
-                "PHONENUMBER: 1-888-8888"
+                "PHONENUMBER: 1-888-8888",
+                ApplyStatus.APPROVED
         );
 
         uuid1 = conference1.getId();
@@ -78,7 +80,8 @@ class ConferenceControllerTest {
                 "GUIDEFORPRE: Click the submission button",
                 List.of("Sponsor 1", "Sponsor 2"),
                 List.of("Exhibitor 1", "Exhibitor 2"),
-                "PHONENUMBER: 1-888-8888"
+                "PHONENUMBER: 1-888-8888",
+                ApplyStatus.APPROVED
         );
 
         uuid2 = conference2.getId();

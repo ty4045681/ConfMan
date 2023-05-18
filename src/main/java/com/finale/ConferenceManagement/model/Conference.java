@@ -84,4 +84,7 @@ public class Conference {
     // 10. Contact information
     @NonNull
     private String phoneNumber;
+
+    @NonNull
+    private ApplyStatus status;
 }

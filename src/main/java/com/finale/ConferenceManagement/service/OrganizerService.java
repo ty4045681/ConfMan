@@ -28,7 +28,7 @@ public class OrganizerService {
     public long countConferencesByOrganizer(String id) {
         Optional<User> optionalOrganizer = userService.findById(UUID.fromString(id));
         User organizer = optionalOrganizer.orElseThrow(() -> new UserNotFoundException("Organizer not found"));
-        if (organizer.getRoles().contains(UserRole.ORGANIZER)) {
+        if (organizer.getRole() == UserRole.ORGANIZER) {
             return conferenceService.countConferencesByOrganizer(organizer);
         } else {
             throw new UserNotFoundException("User is not an organizer");
@@ -38,7 +38,7 @@ public class OrganizerService {
     private List<Conference> findConferencesByOrganizer(String id) {
         Optional<User> optionalOrganizer = userService.findById(UUID.fromString(id));
         User organizer = optionalOrganizer.orElseThrow(() -> new UserNotFoundException("Organizer not found"));
-        if (organizer.getRoles().contains(UserRole.ORGANIZER)) {
+        if (organizer.getRole() == UserRole.ORGANIZER) {
             return conferenceService.findConferencesByOrganizer(organizer);
         } else {
             throw new UserNotFoundException("User is not an organizer");
@@ -82,7 +82,7 @@ public class OrganizerService {
         if (optionalUser.isPresent()) {
             User organizer = optionalUser.get();
 
-            if (organizer.getRoles().contains(UserRole.ORGANIZER)) {
+            if (organizer.getRole() == UserRole.ORGANIZER) {
                 List<Conference> conferences = conferenceService.findConferencesByOrganizer(organizer);
                 return conferences.stream().map(conference -> new GetConferenceByOrganizerIdResponse(
                         conference.getId().toString(),
@@ -107,7 +107,7 @@ public class OrganizerService {
         if (optionalUser.isPresent()) {
             User organizer = optionalUser.get();
 
-            if (organizer.getRoles().contains(UserRole.ORGANIZER)) {
+            if (organizer.getRole() == UserRole.ORGANIZER) {
                 List<GetAttendeeByOrganizerIdResponse> responses = new ArrayList<>();
                 List<Conference> conferences = conferenceService.findConferencesByOrganizer(organizer);
                 for (Conference conference: conferences) {
@@ -139,7 +139,7 @@ public class OrganizerService {
         User organizer = userService.findById(UUID.fromString(organizerId))
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!organizer.getRoles().contains(UserRole.ORGANIZER)) {
+        if (!(organizer.getRole() == UserRole.ORGANIZER)) {
             throw new BadRequestException("User is not an organizer");
         }
 
@@ -154,7 +154,7 @@ public class OrganizerService {
         User organizer = userService.findById(UUID.fromString(organizerId))
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!organizer.getRoles().contains(UserRole.ORGANIZER)) {
+        if (!(organizer.getRole() == UserRole.ORGANIZER)) {
             throw new BadRequestException("User is not an organizer");
         }
 

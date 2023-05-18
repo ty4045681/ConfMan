@@ -10,8 +10,8 @@ import com.finale.ConferenceManagement.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -51,7 +51,7 @@ public class UserService {
                 registerRequest.getUsername(),
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
-                Set.of(UserRole.USER),
+                UserRole.USER,
                 registerRequest.getName()
         );
 
@@ -80,6 +80,10 @@ public class UserService {
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     public Optional<User> deleteById(UUID id) {
@@ -129,5 +133,9 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public long countUsersByRole(UserRole role) {
+        return userRepository.countUsersByRole(role);
     }
 }
