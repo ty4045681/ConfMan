@@ -5,6 +5,6 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class DeleteSelectedAttendancesOfUserIdRequest {
+public class DeleteSelectedOfUserIdRequest {
     private List<String> ids;
 }

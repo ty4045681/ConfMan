@@ -9,6 +9,7 @@ import com.finale.ConferenceManagement.repository.ConferenceRepository;
 import com.finale.ConferenceManagement.repository.PaperRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -23,22 +24,24 @@ public class PaperService {
     private final PaperRepository paperRepository;
     private final ConferenceRepository conferenceRepository;
     private final UserService userService;
+    private final ReviewService reviewService;
 
-    public PaperService(FileStorageService fileStorageService, PaperRepository paperRepository, ConferenceRepository conferenceRepository, UserService userService) {
+    public PaperService(FileStorageService fileStorageService, PaperRepository paperRepository,
+            ConferenceRepository conferenceRepository, UserService userService, ReviewService reviewService) {
         this.fileStorageService = fileStorageService;
         this.paperRepository = paperRepository;
         this.conferenceRepository = conferenceRepository;
         this.userService = userService;
+        this.reviewService = reviewService;
     }
 
     public Paper storeFile(String conferenceId,
-                           String submitterName,
-                           String title,
-                           String authors,
-                           String abstractOfPaper,
-                           String keywords,
-                           MultipartFile file) throws RuntimeException {
-
+            String submitterName,
+            String title,
+            String authors,
+            String abstractOfPaper,
+            String keywords,
+            MultipartFile file) throws RuntimeException {
 
         Paper paper = new Paper(
                 getConferenceFromConferenceId(conferenceId),
@@ -48,8 +51,7 @@ public class PaperService {
                 Arrays.stream(authors.split(",")).collect(Collectors.toSet()),
                 abstractOfPaper,
                 Arrays.stream(keywords.split(",")).collect(Collectors.toSet()),
-                ""
-        );
+                "");
 
         return fileStorageService.storeFile(paper, file, paperRepository::save, (p, storedFileName) -> {
             p.setFileName(storedFileName);
@@ -94,8 +96,10 @@ public class PaperService {
         return paperRepository.countByAuthorAndStatus(getUserFromUsername(username), status);
     }
 
-    public long countPaperByAuthorAndStatusAndConferenceTime(String username, ApplyStatus status, boolean isConferenceUpcoming) {
-        return paperRepository.countByAuthorAndStatusAndConferenceTime(getUserFromUsername(username), status, isConferenceUpcoming);
+    public long countPaperByAuthorAndStatusAndConferenceTime(String username, ApplyStatus status,
+            boolean isConferenceUpcoming) {
+        return paperRepository.countByAuthorAndStatusAndConferenceTime(getUserFromUsername(username), status,
+                isConferenceUpcoming);
     }
 
     public long countPapersByConference(String conferenceId) {
@@ -110,8 +114,37 @@ public class PaperService {
         return paperRepository.findPapersByConference(conference);
     }
 
+    public void deleteSelectedPapersOfUserId(String userId, List<String> paperIds) {
+        User user = getUserFromUserId(userId);
+        if (user.equals(null)) {
+            throw new UserNotFoundException();
+        }
+        paperIds.stream()
+                .map(UUID::fromString)
+                .map(paperId -> findPaperById(paperId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(paper -> {
+                    cascadingDeletePaper(paper.getId());
+                });
+    }
+
+    public void deleteByAuthor_Id(UUID authorId) {
+        paperRepository.deleteByAuthor_Id(authorId);
+    }
+
+    public void deleteByConference_Id(UUID conferenceId) {
+        paperRepository.deleteByConference_Id(conferenceId);
+    }
+
+    @Transactional
+    public void cascadingDeletePaper(UUID id) {
+        paperRepository.deleteById(id);
+        reviewService.deleteByPaper_Id(id);
+    }
+
     private Conference getConferenceFromConferenceId(String conferenceId) {
-        return conferenceRepository.findConferenceById(UUID.fromString(conferenceId));
+        return conferenceRepository.findConferenceById(UUID.fromString(conferenceId)).get();
     }
 
     private User getUserFromUsername(String username) {
@@ -121,5 +154,4 @@ public class PaperService {
     private User getUserFromUserId(String id) {
         return userService.findById(UUID.fromString(id)).orElse(null);
     }
-
 }

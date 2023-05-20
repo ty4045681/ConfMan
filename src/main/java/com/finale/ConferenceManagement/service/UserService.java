@@ -9,6 +9,7 @@ import com.finale.ConferenceManagement.model.UserRole;
 import com.finale.ConferenceManagement.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +19,23 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AttendanceService attendanceService;
+    private final ConferenceService conferenceService;
+    private final PaperService paperService;
+    private final ReviewService reviewService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            AttendanceService attendanceService,
+            ConferenceService conferenceService,
+            PaperService paperService,
+            ReviewService reviewService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.attendanceService = attendanceService;
+        this.conferenceService = conferenceService;
+        this.paperService = paperService;
+        this.reviewService = reviewService;
     }
 
     public User registerUser(User user) {
@@ -52,8 +66,7 @@ public class UserService {
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
                 UserRole.USER,
-                registerRequest.getName()
-        );
+                registerRequest.getName());
 
         if (!registerRequest.getAddress().isEmpty()) {
             newUser.setAddress(registerRequest.getAddress());
@@ -95,6 +108,7 @@ public class UserService {
             return Optional.empty();
         }
     }
+
     public Optional<User> updateUser(String id, UpdateRequest updateRequest) {
         Optional<User> optionalUser = userRepository.findById(UUID.fromString(id));
         if (optionalUser.isPresent()) {
@@ -137,5 +151,14 @@ public class UserService {
 
     public long countUsersByRole(UserRole role) {
         return userRepository.countUsersByRole(role);
+    }
+
+    @Transactional
+    public void cascadingDeleteUser(UUID id) {
+        userRepository.deleteById(id);
+        attendanceService.deleteByUser_Id(id);
+        conferenceService.deleteByOrganizer_Id(id);
+        paperService.deleteByAuthor_Id(id);
+        reviewService.deleteByJudge_Id(id);
     }
 }

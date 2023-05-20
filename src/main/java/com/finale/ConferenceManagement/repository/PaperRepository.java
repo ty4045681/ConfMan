@@ -21,4 +21,7 @@ public interface PaperRepository extends MongoRepository<Paper, UUID>, PaperRepo
 
     List<Paper> findPapersByConference(Conference conference);
 
+    void deleteByAuthor_Id(UUID authorId);
+
+    void deleteByConference_Id(UUID conferenceId);
 }

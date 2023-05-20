@@ -21,4 +21,10 @@ public interface ReviewRepository extends MongoRepository<Review, UUID>, ReviewR
     Paper findPaperByReview(Review review);
 
     long countPapersByJudgeAndStatus(User judge, ApplyStatus status);
+
+    void deleteByJudge_Id(UUID judgeId);
+
+    void deleteByPaper_Id(UUID paperId);
+
+    void deleteByConference_Id(UUID conferenceId);
 }

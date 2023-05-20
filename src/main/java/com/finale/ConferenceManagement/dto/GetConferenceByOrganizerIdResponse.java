@@ -14,4 +14,5 @@ public class GetConferenceByOrganizerIdResponse {
     private long acceptedUsersNumber;
     private long rejectedUsersNumber;
     private long pendingUsersNumber;
+    private String status;
 }

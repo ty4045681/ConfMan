@@ -6,13 +6,17 @@ import com.finale.ConferenceManagement.dto.GetUserByAdminIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
 import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Conference;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.model.UserRole;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
+import javax.swing.text.html.Option;
 
 @Service
 @AllArgsConstructor
@@ -80,5 +84,41 @@ public class AdminService {
         }
 
         return userService.findAllUsers().stream().map(GetUserByAdminIdResponse::new).toList();
+    }
+
+    public void deleteSelectedConferencesByAdminId(String id, List<String> conferenceIds) {
+        User admin = userService.findById(UUID.fromString(id))
+                .orElseThrow(UserNotFoundException::new);
+        if (admin.getRole() != UserRole.ADMIN) {
+            throw new BadRequestException("User is not admin");
+        }
+
+        for (String conferenceId : conferenceIds) {
+            Optional<Conference> optionalConference = conferenceService.findConferencesById(UUID.fromString(conferenceId));
+            if (optionalConference.isPresent()) {
+                Conference conference = optionalConference.get();
+                conferenceService.cascadingDeleteConference(conference.getId());
+            } else {
+                throw new BadRequestException("Conference is not found");
+            }
+        }
+    }
+
+    public void deleteSelectedUsersByAdminId(String id, List<String> userIds) {
+        User admin = userService.findById(UUID.fromString(id))
+                .orElseThrow(UserNotFoundException::new);
+        if (admin.getRole() != UserRole.ADMIN) {
+            throw new BadRequestException("User is not admin");
+        }
+
+        for (String userId : userIds) {
+            Optional<User> optionalUser = userService.findById(UUID.fromString(userId));
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                userService.cascadingDeleteUser(user.getId());
+            } else {
+                throw new BadRequestException("User is not found");
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.finale.ConferenceManagement.controller;
 
-import com.finale.ConferenceManagement.dto.DeleteSelectedAttendancesOfUserIdRequest;
+import com.finale.ConferenceManagement.dto.DeleteSelectedOfUserIdRequest;
 import com.finale.ConferenceManagement.dto.GetConferencesByUserIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
@@ -66,7 +66,7 @@ public class AttendanceController {
     }
 
     @DeleteMapping("/userId={userId}/delete/attendance")
-    public ResponseEntity<?> deleteSelectedAttendancesOfUserId(@PathVariable("userId") String userId, @Validated @RequestBody DeleteSelectedAttendancesOfUserIdRequest request) {
+    public ResponseEntity<?> deleteSelectedAttendancesOfUserId(@PathVariable("userId") String userId, @Validated @RequestBody DeleteSelectedOfUserIdRequest request) {
         try {
             attendanceService.deleteSelectedAttendancesOfUserId(userId, request.getIds());
             return ResponseEntity.ok().body("Delete successfully");

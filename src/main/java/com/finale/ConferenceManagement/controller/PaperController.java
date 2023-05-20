@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement.controller;
 
+import com.finale.ConferenceManagement.dto.DeleteSelectedOfUserIdRequest;
 import com.finale.ConferenceManagement.dto.GetPapersByUserIdResponse;
 import com.finale.ConferenceManagement.exceptions.BadRequestException;
 import com.finale.ConferenceManagement.exceptions.UserNotFoundException;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -28,8 +30,8 @@ public class PaperController {
     public ResponseEntity<?> getCountPaperByUserAndConferenceTimeAndStatus(
             @RequestHeader(value = "Authorization", required = false, defaultValue = "") String token,
             @RequestParam(value = "isConferenceUpcoming", required = false) Boolean isConferenceUpcoming,
-            @RequestParam(value = "status", required = false, defaultValue = "") String status
-    ) throws BadRequestException, UserNotFoundException {
+            @RequestParam(value = "status", required = false, defaultValue = "") String status)
+            throws BadRequestException, UserNotFoundException {
         if (token.isEmpty()) {
             throw new BadRequestException("Authorization header is missing");
         }
@@ -49,15 +51,28 @@ public class PaperController {
             throw new UserNotFoundException();
         }
 
-        return ResponseEntity.ok(paperService.countPaperByAuthorAndStatusAndConferenceTime(username, ApplyStatus.valueOf(status), isConferenceUpcoming));
+        return ResponseEntity.ok(paperService.countPaperByAuthorAndStatusAndConferenceTime(username,
+                ApplyStatus.valueOf(status), isConferenceUpcoming));
     }
 
     @GetMapping("/userId={userId}")
     public ResponseEntity<?> getPapersByUserId(@PathVariable("userId") String userId) {
         try {
             List<Paper> papers = paperService.findAllPapersByUserId(userId);
-            List<GetPapersByUserIdResponse> responses = papers.stream().map(paper -> new GetPapersByUserIdResponse(paper)).toList();
+            List<GetPapersByUserIdResponse> responses = papers.stream()
+                    .map(paper -> new GetPapersByUserIdResponse(paper)).toList();
             return ResponseEntity.ok().body(responses);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @DeleteMapping("/userId={userId}")
+    public ResponseEntity<?> deleteSelectedPapersOfUserId(@PathVariable("userId") String userId,
+            @Validated @RequestBody DeleteSelectedOfUserIdRequest request) {
+        try {
+            paperService.deleteSelectedPapersOfUserId(userId, request.getIds());
+            return ResponseEntity.ok().body("Delete selected papers successfully");
         } catch (Exception e) {
             throw e;
         }

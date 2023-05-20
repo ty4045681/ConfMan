@@ -1,9 +1,13 @@
 package com.finale.ConferenceManagement.controller;
 
+import com.finale.ConferenceManagement.dto.DeleteSelectedOfUserIdRequest;
 import com.finale.ConferenceManagement.service.OrganizerService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,5 +57,16 @@ public class OrganizerController {
     @GetMapping("/organizerId={id}/judge")
     public ResponseEntity<?> getJudgesByOrganizerId(@PathVariable("id") String id) {
         return ResponseEntity.ok(organizerService.findJudgeByOrganizerId(id));
+    }
+
+    @DeleteMapping("/organizerId={id}/conference")
+    public ResponseEntity<?> deleteSelectedConferencesByOrganizerId(@PathVariable("id") String id,
+            @Validated @RequestBody DeleteSelectedOfUserIdRequest request) {
+        try {
+            organizerService.deleteSelectedConferencesByOrganizerId(id, request.getIds());
+            return ResponseEntity.ok("Delete successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

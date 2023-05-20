@@ -76,7 +76,7 @@ public class PresentationService {
     }
 
     private Conference getConferenceFromConferenceId(String conferenceId) {
-        return conferenceRepository.findConferenceById(UUID.fromString(conferenceId));
+        return conferenceRepository.findConferenceById(UUID.fromString(conferenceId)).get();
     }
     private User getUserFromUsername(String username) {
         return userService.findByUsername(username).orElse(null);

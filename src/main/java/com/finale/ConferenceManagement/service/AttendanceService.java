@@ -109,4 +109,12 @@ public class AttendanceService {
             throw new UserNotFoundException();
         }
     }
+
+    public void deleteByUser_Id(UUID userId) {
+        attendanceRepository.deleteByUser_Id(userId);
+    }
+
+    public void deleteByConference_Id(UUID conferenceId) {
+        attendanceRepository.deleteByConference_Id(conferenceId);
+    }
 }

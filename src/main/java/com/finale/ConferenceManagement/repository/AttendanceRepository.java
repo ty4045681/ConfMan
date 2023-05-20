@@ -29,5 +29,9 @@ public interface AttendanceRepository extends MongoRepository<Attendance, UUID>,
     List<Attendance> findAttendeesByConferenceAndStatus(Conference conference, ApplyStatus applyStatus);
 
     User findUserByAttendance(Attendance attendance);
+
+    void deleteByUser_Id(UUID userId);
+
+    void deleteByConference_Id(UUID conferenceId);
 }
 

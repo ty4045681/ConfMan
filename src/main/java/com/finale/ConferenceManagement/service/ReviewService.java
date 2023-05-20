@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -38,5 +39,17 @@ public class ReviewService {
 
     public long countPaperByJudgeAndStatus(User judge, ApplyStatus status) {
         return reviewRepository.countPapersByJudgeAndStatus(judge, status);
+    }
+
+    public void deleteByConference_Id(UUID conferenceId) {
+        reviewRepository.deleteByConference_Id(conferenceId);
+    }
+
+    public void deleteByJudge_Id(UUID judgeId) {
+        reviewRepository.deleteByJudge_Id(judgeId);
+    }
+
+    public void deleteByPaper_Id(UUID paperId) {
+        reviewRepository.deleteByPaper_Id(paperId);
     }
 }

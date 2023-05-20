@@ -92,7 +92,8 @@ public class OrganizerService {
                         conference.getLocation(),
                         attendanceService.countAttendeesByConferenceAndStatus(conference, ApplyStatus.APPROVED),
                         attendanceService.countAttendeesByConferenceAndStatus(conference, ApplyStatus.REJECTED),
-                        attendanceService.countAttendeesByConferenceAndStatus(conference, ApplyStatus.PENDING)
+                        attendanceService.countAttendeesByConferenceAndStatus(conference, ApplyStatus.PENDING),
+                        conference.getStatus().name()
                 )).toList();
             } else {
                 throw new BadRequestException("User is not an organizer");
@@ -171,5 +172,28 @@ public class OrganizerService {
                             );
                         }))
                 .collect(Collectors.toList());
+    }
+
+    public void deleteSelectedConferencesByOrganizerId(String organizerId, List<String> conferenceIds) {
+        User organizer = userService.findById(UUID.fromString(organizerId))
+                .orElseThrow(UserNotFoundException::new);
+
+        if (!(organizer.getRole() == UserRole.ORGANIZER)) {
+            throw new BadRequestException("User is not an organizer");
+        }
+
+        for (String conferenceId: conferenceIds) {
+            Optional<Conference> optionalConference = conferenceService.findConferencesById(UUID.fromString(conferenceId));
+            if (optionalConference.isPresent()) {
+                Conference conference = optionalConference.get();
+                if (conference.getOrganizer().getId().equals(organizer.getId())) {
+                    conferenceService.cascadingDeleteConference(conference.getId());
+                } else {
+                    throw new BadRequestException("Conference is not organized by this organizer");
+                }
+            } else {
+                throw new BadRequestException("Conference is not found");
+            }
+        }
     }
 }
