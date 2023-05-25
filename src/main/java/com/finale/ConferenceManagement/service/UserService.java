@@ -6,7 +6,14 @@ import com.finale.ConferenceManagement.dto.UpdateRequest;
 import com.finale.ConferenceManagement.exceptions.UserAlreadyExistsException;
 import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.model.UserRole;
+import com.finale.ConferenceManagement.repository.AttendanceRepository;
+import com.finale.ConferenceManagement.repository.ConferenceRepository;
+import com.finale.ConferenceManagement.repository.PaperRepository;
+import com.finale.ConferenceManagement.repository.ReviewRepository;
 import com.finale.ConferenceManagement.repository.UserRepository;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,27 +23,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AttendanceService attendanceService;
-    private final ConferenceService conferenceService;
-    private final PaperService paperService;
-    private final ReviewService reviewService;
-
-    public UserService(UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            AttendanceService attendanceService,
-            ConferenceService conferenceService,
-            PaperService paperService,
-            ReviewService reviewService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.attendanceService = attendanceService;
-        this.conferenceService = conferenceService;
-        this.paperService = paperService;
-        this.reviewService = reviewService;
-    }
+    private final AttendanceRepository attendanceRepository;
+    private final ConferenceRepository conferenceRepository;
+    private final PaperRepository paperRepository;
+    private final ReviewRepository reviewRepository;
 
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -156,9 +150,9 @@ public class UserService {
     @Transactional
     public void cascadingDeleteUser(UUID id) {
         userRepository.deleteById(id);
-        attendanceService.deleteByUser_Id(id);
-        conferenceService.deleteByOrganizer_Id(id);
-        paperService.deleteByAuthor_Id(id);
-        reviewService.deleteByJudge_Id(id);
+        attendanceRepository.deleteByUser_Id(id);
+        conferenceRepository.deleteByOrganizer_Id(id);
+        paperRepository.deleteByAuthor_Id(id);
+        reviewRepository.deleteByJudge_Id(id);
     }
 }

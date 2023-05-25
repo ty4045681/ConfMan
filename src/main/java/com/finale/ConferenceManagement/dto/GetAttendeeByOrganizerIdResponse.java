@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GetAttendeeByOrganizerIdResponse {
+    private String id;
     private String name;
     private String username;
     private String email;

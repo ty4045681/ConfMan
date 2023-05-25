@@ -117,6 +117,7 @@ public class OrganizerService {
                         responses.addAll(attendances.stream().map(attendance -> {
                             User user = attendanceService.findUserByAttendance(attendance);
                             return new GetAttendeeByOrganizerIdResponse(
+                                    user.getId().toString(),
                                     user.getName(),
                                     user.getUsername(),
                                     user.getEmail(),

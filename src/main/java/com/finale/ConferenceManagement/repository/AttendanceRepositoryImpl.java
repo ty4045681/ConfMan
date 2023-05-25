@@ -28,7 +28,8 @@ public class AttendanceRepositoryImpl implements AttendanceRepositoryCustom {
     }
 
     @Override
-    public long countConferencesByUserAndStatusAndTime(User user, ApplyStatus applyStatus, boolean isConferenceUpcoming) {
+    public long countConferencesByUserAndStatusAndTime(User user, ApplyStatus applyStatus,
+            boolean isConferenceUpcoming) {
         MatchOperation userMatch = Aggregation.match(Criteria.where("user.$id").is(user.getId()));
         MatchOperation statusMatch = Aggregation.match(Criteria.where("status").is(applyStatus));
 
@@ -37,10 +38,12 @@ public class AttendanceRepositoryImpl implements AttendanceRepositoryCustom {
                 .localField("conference.$id")
                 .foreignField("_id")
                 .as("conference");
-        MatchOperation timeMatch = isConferenceUpcoming ? Aggregation.match(Criteria.where("conference.startDate").gte(LocalDateTime.now()))
+        MatchOperation timeMatch = isConferenceUpcoming
+                ? Aggregation.match(Criteria.where("conference.startDate").gte(LocalDateTime.now()))
                 : Aggregation.match(Criteria.where("conference.startDate").lt(LocalDateTime.now()));
 
-        Aggregation aggregation = Aggregation.newAggregation(userMatch, statusMatch, lookupConference, Aggregation.unwind("conference"), timeMatch, Aggregation.count().as("count"));
+        Aggregation aggregation = Aggregation.newAggregation(userMatch, statusMatch, lookupConference,
+                Aggregation.unwind("conference"), timeMatch, Aggregation.count().as("count"));
 
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "attendance", Document.class);
         Document result = results.getUniqueMappedResult();
@@ -53,7 +56,8 @@ public class AttendanceRepositoryImpl implements AttendanceRepositoryCustom {
         MatchOperation conferenceMatch = Aggregation.match(Criteria.where("conference.$id").is(conference.getId()));
         MatchOperation statusMatch = Aggregation.match(Criteria.where("status").is(applyStatus));
 
-        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch, statusMatch, Aggregation.count().as("count"));
+        Aggregation aggregation = Aggregation.newAggregation(conferenceMatch, statusMatch,
+                Aggregation.count().as("count"));
 
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "attendance", Document.class);
         Document result = results.getUniqueMappedResult();

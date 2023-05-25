@@ -60,7 +60,7 @@ public class SampleDataInitializerAndDeleter {
                 "123@gmail.com",
                 "password1",
                 UserRole.ORGANIZER,
-                "Tom"
+                "组织者1"
         );
 
         organizer2 = new User(
@@ -197,14 +197,16 @@ public class SampleDataInitializerAndDeleter {
                 judge1,
                 conference1,
                 paper1,
-                ApplyStatus.APPROVED
+                ApplyStatus.APPROVED,
+                ""
         );
 
         review2 = new Review(
                 judge1,
                 conference1,
                 paper2,
-                ApplyStatus.PENDING
+                ApplyStatus.PENDING,
+                ""
         );
     }
 

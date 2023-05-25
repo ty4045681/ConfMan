@@ -24,4 +24,6 @@ public class Attendance {
 
     @NonNull
     private ApplyStatus status;
+
+    private String message;
 }

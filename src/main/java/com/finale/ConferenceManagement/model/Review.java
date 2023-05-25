@@ -28,10 +28,13 @@ public class Review {
 
     private ApplyStatus applyStatus;
 
-    public Review(@NotNull User judge, @NotNull Conference conference, Paper paper, ApplyStatus applyStatus) {
+    private String message;
+
+    public Review(@NotNull User judge, @NotNull Conference conference, Paper paper, ApplyStatus applyStatus, String message) {
         this.judge = judge;
         this.conference = conference;
         this.paper = paper;
         this.applyStatus = applyStatus;
+        this.message = message;
     }
 }
