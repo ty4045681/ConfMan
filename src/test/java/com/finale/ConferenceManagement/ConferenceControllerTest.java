@@ -37,7 +37,7 @@ class ConferenceControllerTest {
         conferenceRepository.deleteAll();
 
         conference1 = new Conference(
-                null, "TITLE: A test title",
+                null, null, "TITLE: A test title",
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 LocalDateTime.of(2023, Month.MAY, 20, 9, 0),
                 "LOCATION: Shanghai",
@@ -62,7 +62,7 @@ class ConferenceControllerTest {
         uuid1 = conference1.getId();
 
         conference2 = new Conference(
-                null, "TITLE: A second test title",
+                null, null, "TITLE: A second test title",
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 LocalDateTime.of(2023, Month.MAY, 21, 9, 0),
                 "LOCATION: Shanghai",

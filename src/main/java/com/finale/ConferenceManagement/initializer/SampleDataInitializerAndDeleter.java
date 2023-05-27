@@ -1,284 +1,196 @@
 package com.finale.ConferenceManagement.initializer;
 
-import com.finale.ConferenceManagement.model.*;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
+
+import com.finale.ConferenceManagement.model.ApplyStatus;
+import com.finale.ConferenceManagement.model.Attendance;
+import com.finale.ConferenceManagement.model.Conference;
+import com.finale.ConferenceManagement.model.Paper;
+import com.finale.ConferenceManagement.model.Review;
+import com.finale.ConferenceManagement.model.User;
+import com.finale.ConferenceManagement.model.UserRole;
+
+import net.datafaker.Faker;
 
 @Component
 public class SampleDataInitializerAndDeleter {
     private final MongoTemplate mongoTemplate;
-
-    private final User user1;
-    private final User user2;
-    private final User organizer1;
-    private final User organizer2;
-    private final User judge1;
-    private final User judge2;
-
-    private final Conference conference1;
-    private final Conference conference2;
-
-    private final Attendance attendance1;
-    private final Attendance attendance2;
-    private final Attendance attendance3;
-    private final Attendance attendance4;
-
-    private final Review review1;
-
-    private final Review review2;
-
-    private final Paper paper1;
-    private final Paper paper2;
+    private final Faker faker;
 
     public SampleDataInitializerAndDeleter(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+        this.faker = new Faker();
+    }
 
-        user1 = new User(
-                "USER1",
-                "abc@gmail.com",
-                "password1",
-                UserRole.USER,
-                "Peter"
-        );
+    private Stream<User> generateUser(UserRole role) {
+        return faker.stream(() -> {
+                return new User(
+                    faker.zelda().character(), 
+                    faker.harryPotter().character().replace(" ", "_") + "@gmail.com", 
+                    faker.expression("#{regexify '[a-z]{8,10}'}"), 
+                    role, 
+                    faker.funnyName().name()
+                    // faker.address().fullAddress(),
+                    // faker.phoneNumber().cellPhone(),
+                    // faker.harryPotter().quote()
+                );
+        }).generate();
+    }
 
-        user2 = new User(
-                "USER2",
-                "def@gmail.com",
-                "password2",
-                UserRole.ADMIN,
-                "Sadie"
-        );
+    private Stream<Conference> generateConference(User organizer, ApplyStatus status) {
+        if (organizer.getRole() != UserRole.ORGANIZER) {
+            throw new IllegalArgumentException("The user is not an organizer");
+        }
 
-        organizer1 = new User(
-                "ORGANIZER1",
-                "123@gmail.com",
-                "password1",
-                UserRole.ORGANIZER,
-                "组织者1"
-        );
-
-        organizer2 = new User(
-                "ORGANIZER2",
-                "456@gmail.com",
-                "password2",
-                UserRole.ORGANIZER,
-                "Jerry"
-        );
-
-        judge1 = new User(
-                "JUDGE1",
-                "JUDGE1@gmail.com",
-                "password1",
-                UserRole.JUDGE,
-                "Tom"
-        );
-
-        judge2 = new User(
-                "JUDGE2",
-                "JUDGE2@gmail.com",
-                "password2",
-                UserRole.JUDGE,
-                "Jerry"
-        );
-
-        conference1 = new Conference(
-                organizer1,
-                "Tech Summit 2023",
-                LocalDateTime.of(2023, 6, 1, 9, 0),
-                LocalDateTime.of(2023, 6, 3, 18, 0),
-                "San Francisco, CA",
-                "Technology",
-                "Innovation in Software",
+        return faker.stream((Supplier<Conference>) () -> {
+            int year = faker.number().numberBetween(2021, 2025);
+            LocalDateTime startDate = LocalDateTime.of(year, faker.number().numberBetween(1, 13), faker.number().numberBetween(1, 29), 0, 0);
+            int duration = faker.number().numberBetween(1, 16);
+            LocalDateTime endDate = startDate.plusDays(duration);
+            String theme = faker.programmingLanguage().name();
+            
+            return new Conference(
+                UUID.randomUUID(), 
+                organizer,
+                "Conference " + Integer.toString(year) + ": Topic in " + theme,
+                startDate,
+                endDate,
+                faker.address().fullAddress(),
+                theme,
+                faker.pokemon().name(),
                 Map.of(
-                        "Keynote 1", "John Doe",
-                        "Keynote 2", "Jane Smith"
+                    faker.hobby().activity(), faker.zelda().character(),
+                    faker.halfLife().character(), faker.zelda().character()
                 ),
                 Map.of(
-                        LocalDateTime.of(2023, 6, 1, 10, 0), "Session 1",
-                        LocalDateTime.of(2023, 6, 1, 11, 0), "Session 2"
+                    startDate, faker.harryPotter().quote()
                 ),
-                "Register online at techsummit2023.com",
-                List.of("Hotel 1", "Hotel 2"),
-                LocalDateTime.of(2023, 3, 1, 0, 0),
-                LocalDateTime.of(2023, 4, 1, 0, 0),
-                LocalDateTime.of(2023, 4, 1, 0, 0),
-                LocalDateTime.of(2023, 5, 1, 0, 0),
-                "Paper submission guidelines available at techsummit2023.com/cfp",
-                "Presentation submission guidelines available at techsummit2023.com/cfp",
-                List.of("Sponsor 1", "Sponsor 2"),
-                List.of("Exhibitor 1", "Exhibitor 2"),
-                "+1-800-123-4567",
-                ApplyStatus.APPROVED
-        );
-
-        conference2 = new Conference(
-                organizer2,
-                "Global Health Conference 2023",
-                LocalDateTime.of(2023, 7, 15, 9, 0),
-                LocalDateTime.of(2023, 7, 17, 18, 0),
-                "London, UK",
-                "Healthcare",
-                "Global Health Challenges",
-                Map.of(
-                        "Keynote 1", "Dr. Alice Johnson",
-                        "Keynote 2", "Dr. Bob Martin"
+                "Register now to get the early bird discount!",
+                List.of(
+                    faker.address().fullAddress()
                 ),
-                Map.of(
-                        LocalDateTime.of(2023, 7, 15, 10, 0), "Session 1",
-                        LocalDateTime.of(2023, 7, 15, 11, 0), "Session 2"
+                startDate,
+                endDate,
+                startDate,
+                endDate,
+                faker.harryPotter().quote(),
+                faker.harryPotter().quote(),
+                List.of(
+                    faker.harryPotter().character(),
+                    faker.minecraft().animalName()
                 ),
-                "Register online at globalhealthconference2023.com",
-                List.of("Hotel A", "Hotel B"),
-                LocalDateTime.of(2023, 4, 15, 0, 0),
-                LocalDateTime.of(2023, 5, 15, 0, 0),
-                LocalDateTime.of(2023, 5, 15, 0, 0),
-                LocalDateTime.of(2023, 6, 15, 0, 0),
-                "Paper submission guidelines available at globalhealthconference2023.com/cfp",
-                "Presentation submission guidelines available at globalhealthconference2023.com/cfp",
-                List.of("Sponsor A", "Sponsor B"),
-                List.of("Exhibitor A", "Exhibitor B"),
-                "+44-800-123-4567",
-                ApplyStatus.APPROVED
-        );
+                List.of(
+                    faker.harryPotter().character(),
+                    faker.minecraft().animalName()
+                ),
+                faker.phoneNumber().cellPhone(),
+                status
+            );
+        }).generate();
+    }
 
-        attendance1 = new Attendance(
-                user1,
-                conference1,
-                ApplyStatus.PENDING
-        );
+    private Paper generatePaper(User author, Conference conference, ApplyStatus status) {
+        if (author.getRole() != UserRole.USER) {
+            throw new IllegalArgumentException("The user is not an author");
+        }
 
-        attendance2 = new Attendance(
-                user2,
-                conference1,
-                ApplyStatus.APPROVED
-        );
-
-        attendance3 = new Attendance(
-                user1,
-                conference2,
-                ApplyStatus.APPROVED
-        );
-
-        attendance4 = new Attendance(
-                user2,
-                conference2,
-                ApplyStatus.APPROVED
-        );
-
-        paper1 = new Paper(
-                conference1,
-                user1,
-                ApplyStatus.APPROVED,
-                "title1",
-                Set.of("Joe", "Tom"),
-                "abstract1",
-                Set.of("keyword1", "keyword2"),
-                ""
-        );
-
-        paper2 = new Paper(
-                conference2,
-                user1,
-                ApplyStatus.PENDING,
-                "title2",
-                Set.of("Jack", "Alice"),
-                "abstract2",
-                Set.of("keyword1", "keyword2"),
-                ""
-        );
-
-        review1 = new Review(
-                judge1,
-                conference1,
-                paper1,
-                ApplyStatus.APPROVED,
-                ""
-        );
-
-        review2 = new Review(
-                judge1,
-                conference1,
-                paper2,
-                ApplyStatus.PENDING,
-                ""
+        return new Paper(
+            conference,
+            author,
+            status,
+            faker.computer().brand(),
+            Set.of(faker.name().firstName(), faker.name().firstName()),
+            faker.minecraft().entityName(),
+            Set.of(
+                faker.minecraft().entityName(),
+                faker.minecraft().animalName()
+            ),
+            ""
         );
     }
 
-    public void insertData(String... collectionName) {
-        for (String name : collectionName) {
-            switch (name) {
-                case "user" -> {
-                    mongoTemplate.insert(user1, name);
-                    mongoTemplate.insert(user2, name);
-                    mongoTemplate.insert(organizer1, name);
-                    mongoTemplate.insert(organizer2, name);
-                    mongoTemplate.insert(judge1, name);
-                    mongoTemplate.insert(judge2, name);
-                    System.out.println("Successfully insert user1 and user2");
-                    System.out.println("Successfully insert organizer1 and organizer2");
-                    System.out.println("Successfully insert judge1 and judge2");
-                    System.out.println("USER1 id: " + user1.getId().toString());
-                    System.out.println("USER2 id: " + user2.getId().toString());
-                    System.out.println("ORGANIZER1 id: " + organizer1.getId().toString());
-                    System.out.println("ORGANIZER2 id: " + organizer2.getId().toString());
-                    System.out.println("JUDGE1 id: " + judge1.getId().toString());
-                    System.out.println("JUDGE2 id: " + judge2.getId().toString());
-                }
-                case "conference" -> {
-                    mongoTemplate.insert(conference1, name);
-                    mongoTemplate.insert(conference2, name);
-                    System.out.println("Successfully insert conference1 and conference2");
-                    System.out.println("CONFERENCE1 title: " + conference1.getTitle());
-                    System.out.println("CONFERENCE2 title: " + conference2.getTitle());
-                }
-                case "attendance" -> {
-                    mongoTemplate.insert(attendance1, name);
-                    mongoTemplate.insert(attendance2, name);
-                    mongoTemplate.insert(attendance3, name);
-                    mongoTemplate.insert(attendance4, name);
-                    System.out.println("Successfully insert attendance1, attendance2, attendance3 and attendance4");
-                    System.out.println("ATTENDANCE1 id: " + attendance1.getId().toString());
-                    System.out.println("ATTENDANCE2 id: " + attendance2.getId().toString());
-                    System.out.println("ATTENDANCE3 id: " + attendance3.getId().toString());
-                    System.out.println("ATTENDANCE4 id: " + attendance4.getId().toString());
-                }
-                case "paper" -> {
-                    mongoTemplate.insert(paper1, name);
-                    mongoTemplate.insert(paper2, name);
-                    System.out.println("Successfully insert paper1, paper2");
-                    System.out.println("PAPER1 title: " + paper1.getTitle());
-                    System.out.println("PAPER2 title: " + paper2.getTitle());
-                }
-                case "review" -> {
-                    mongoTemplate.insert(review1, name);
-                    mongoTemplate.insert(review2, name);
-                    System.out.println("Successfully insert review1, review2");
-                    System.out.println("REVIEW1 id: " + review1.getId().toString());
-                    System.out.println("REVIEW2 id: " + review2.getId().toString());
-                }
-                default -> System.out.println("Collection '" + name + "' does not exist");
-            }
+    private Review generateReview(User judge, Conference conference, Paper paper, ApplyStatus status) {
+        if (judge.getRole() != UserRole.JUDGE) {
+            throw new IllegalArgumentException("The user is not a judge");
         }
+
+        return new Review(judge, conference, paper, status, faker.harryPotter().quote());
+    }
+
+    private Attendance generateAttendance(User user, Conference conference, ApplyStatus status) {
+        if (user.getRole() != UserRole.USER) {
+            throw new IllegalArgumentException("The user is not an attendee");
+        }
+
+        return new Attendance(UUID.randomUUID(), user, conference, status, faker.harryPotter().quote());
+    }
+
+    public void insertData() {
+        System.out.println("\n++++++++++++++Inserting sample data...+++++++++++++++");
+        List<User> attendees = generateUser(UserRole.USER).limit(10).toList();
+        List<User> judges = generateUser(UserRole.JUDGE).limit(10).toList();
+        List<User> organizers = generateUser(UserRole.ORGANIZER).limit(10).toList();
+        List<User> admins = generateUser(UserRole.ADMIN).limit(10).toList();
+
+        User sampleOrganizer1 = organizers.get(0);
+        System.out.println("Organizer1 username: " + sampleOrganizer1.getUsername() + ", and password: " + sampleOrganizer1.getPassword());
+        User sampleJudge1 = judges.get(0);
+        System.out.println("Judge1 username: " + sampleJudge1.getUsername() + ", and password: " + sampleJudge1.getPassword());
+        User sampleAttendee1 = attendees.get(0);
+        System.out.println("Attendee1 username: " + sampleAttendee1.getUsername() + ", and password: " + sampleAttendee1.getPassword());
+        User sampleAdmin1 = admins.get(0);
+        System.out.println("Admin1 username: " + sampleAdmin1.getUsername() + ", and password: " + sampleAdmin1.getPassword());
+
+        mongoTemplate.insert(attendees, "user");
+        mongoTemplate.insert(judges, "user");
+        mongoTemplate.insert(organizers, "user");
+        mongoTemplate.insert(sampleAdmin1, "user");
+
+        List<Conference> approvedConferences = generateConference(sampleOrganizer1, ApplyStatus.APPROVED).limit(10).toList();
+        mongoTemplate.insert(approvedConferences, "conference");
+
+        Conference sampleConference1 = approvedConferences.get(0);
+        Conference sampleConference2 = approvedConferences.get(1);
+        Attendance attendee1ToConference1 = generateAttendance(sampleAttendee1, sampleConference1, ApplyStatus.APPROVED);
+        Attendance attendance1ToConference2 = generateAttendance(sampleAttendee1, sampleConference2, ApplyStatus.PENDING);
+        Paper attendee1WritePaper1 = generatePaper(sampleAttendee1, sampleConference1, ApplyStatus.APPROVED);
+        Paper attendee1WritePaper2 = generatePaper(sampleAttendee1, sampleConference2, ApplyStatus.PENDING);
+        Review judge1ReviewPaper1 = generateReview(sampleJudge1, sampleConference1, attendee1WritePaper1, ApplyStatus.APPROVED);
+
+        mongoTemplate.insert(attendee1ToConference1, "attendance");
+        mongoTemplate.insert(attendance1ToConference2, "attendance");
+        mongoTemplate.insert(attendee1WritePaper1, "paper");
+        mongoTemplate.insert(attendee1WritePaper2, "paper");
+        mongoTemplate.insert(judge1ReviewPaper1, "review");
+
+        System.out.println("++++++++++++++Sample data inserted!+++++++++++++++");
     }
 
     public void deleteAllData() {
+        System.out.println("\n+--------------Deleting all data in database--------------+");
         mongoTemplate.remove(new Query(), "user");
-        System.out.println("Delete all users in 'user' collection");
+        System.out.println("| Delete all users in 'user' collection                   |");
         mongoTemplate.remove(new Query(), "conference");
-        System.out.println("Delete all conferences in 'conference' collection");
+        System.out.println("| Delete all conferences in 'conference' collection       |");
         mongoTemplate.remove(new Query(), "paper");
-        System.out.println("Delete all papers in 'paper' collection");
+        System.out.println("| Delete all papers in 'paper' collection                 |");
         mongoTemplate.remove(new Query(), "presentation");
-        System.out.println("Delete all presentations in 'presentation' collection");
+        System.out.println("| Delete all presentations in 'presentation' collection   |");
         mongoTemplate.remove(new Query(), "attendance");
-        System.out.println("Delete all attendances in 'attendance' collection");
+        System.out.println("| Delete all attendances in 'attendance' collection       |");
         mongoTemplate.remove(new Query(), "review");
-        System.out.println("Delete all reviews in 'review' collection");
+        System.out.println("| Delete all reviews in 'review' collection               |");
+
+        System.out.println("+--------------All data in database deleted---------------+");
     }
 }

@@ -8,6 +8,9 @@ import com.finale.ConferenceManagement.model.User;
 import com.finale.ConferenceManagement.model.UserRole;
 import com.finale.ConferenceManagement.repository.UserRepository;
 import com.finale.ConferenceManagement.util.JwtUtils;
+
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -4,7 +4,6 @@ import com.finale.ConferenceManagement.model.Presentation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface PresentationRepository extends MongoRepository<Presentation, UUID> {

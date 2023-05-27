@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;

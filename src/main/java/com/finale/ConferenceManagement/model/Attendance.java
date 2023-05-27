@@ -1,5 +1,6 @@
 package com.finale.ConferenceManagement.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Document(collection = "attendance")
 @Data
+@AllArgsConstructor
 public class Attendance {
     @Id
     private UUID id = UUID.randomUUID();
